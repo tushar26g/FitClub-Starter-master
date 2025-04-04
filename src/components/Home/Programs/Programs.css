@@ -1,0 +1,114 @@
+.Programs {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 0 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.programs-header {
+    display: flex;
+    gap: 5rem;
+    font-weight: bold;
+    font-size: 3rem;
+    justify-content: center;
+    color: white;
+    text-transform: uppercase;
+    font-style: italic;
+}
+
+.program-categories {
+    display: flex;
+    gap: 1rem;
+}
+
+.category {
+    display: flex;
+    flex-direction: column;
+    background-color: gray;
+    padding: 2rem;
+    gap: 1rem;
+    color: white;
+    justify-content: space-between;
+}
+
+.category > :nth-child(1) {
+    width: 2rem;
+    height: 2rem;
+    fill: white;
+}
+
+.category > :nth-child(2) {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.category > :nth-child(3) {
+    font-size: 0.9rem;
+    line-height: 25px;
+}
+
+.join-now {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.join-now > img {
+    width: 1rem;
+}
+
+.category:hover {
+    background: var(--planCard);
+    cursor: pointer;
+}
+ 
+@media screen and (max-width: 768px) {
+    .Programs {
+        padding: 0 1rem; /* Reduce padding for better fit */
+        gap: 1.5rem; /* Reduce spacing */
+    }
+
+    .programs-header {
+        flex-direction: column;
+        gap: 0.8rem; /* Reduce spacing */
+        font-size: 2rem; /* Adjust font size */
+        align-items: center;
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .program-categories {
+        flex-direction: column;
+        gap: 0.8rem; /* Reduce spacing between categories */
+    }
+
+    .category {
+        padding: 1.5rem; /* Reduce padding */
+        gap: 0.8rem;
+        text-align: left; /* Center text */
+        align-items: left;
+    }
+
+    .category > :nth-child(1) {
+        width: 1.8rem; /* Adjust icon size */
+        height: 1.8rem;
+    }
+
+    .category > :nth-child(2) {
+        font-size: 0.9rem; /* Reduce title size */
+    }
+
+    .category > :nth-child(3) {
+        font-size: 0.85rem; /* Reduce paragraph size */
+        line-height: 1.5;
+    }
+
+    .join-now {
+        gap: 1rem; /* Reduce spacing */
+    }
+
+    .join-now > img {
+        width: 0.9rem; /* Adjust image size */
+    }
+}

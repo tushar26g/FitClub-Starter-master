@@ -1,0 +1,150 @@
+.Testimonials {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    color: white;
+    margin-bottom: -5rem;
+}
+
+/* Heading */
+.heading {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--orange);
+    text-transform: uppercase;
+}
+
+/* Testimonial Item */
+.testimonial-item {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1.5rem;
+    border: 2px solid var(--orange);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+/* Left Section - Text */
+.left-t {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    text-transform: uppercase;
+}
+
+.left-t .review {
+    text-transform: none;
+    text-align: justify;
+    letter-spacing: 1px;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+/* Right Section - Image */
+.right-t {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-t img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--orange);
+    position: absolute;
+    z-index: 3;
+}
+
+/* Background Box */
+.background-box {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: var(--planCard);
+    right: 5px;
+    top: 5px;
+    z-index: 1;
+    border-radius: 50%;
+}
+
+/* Border Box */
+.border-box {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border: 2px solid orange;
+    background-color: transparent;
+    right: 0;
+    top: 0;
+    z-index: 2;
+    border-radius: 50%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .Testimonials {
+        padding: 1.5rem;
+        gap: 1rem;
+    }
+
+    .testimonial-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+        gap: 1rem;
+        border-radius: 8px;
+        max-width: 90%;
+        margin: 0 auto;
+    }
+
+    /* Ensure left-t text is centered */
+    .left-t {
+        text-align: center;
+        padding: 0 1rem;
+    }
+
+    .left-t .review {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* Right section adjustments */
+    .right-t {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .right-t img {
+        width: 120px;
+        height: 120px;
+        border: 2px solid var(--orange);
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Background and border boxes should not overlap */
+    .background-box {
+        width: 70px;
+        height: 70px;
+        right: 0;
+        top: 0;
+    }
+
+    .border-box {
+        width: 80px;
+        height: 80px;
+        right: 0;
+        top: 0;
+    }
+}
