@@ -93,9 +93,11 @@
 /* Button inside Right Section */
 .right-h > .btn {
     position: absolute;
-    right: 3rem;
+    right: 5rem;
     top: 2rem;
-    color: black;
+    color: var(--orange);
+    /* width: 105px; */
+    font-size: 17px;
 }
 
 /* Heart Rate Box */
@@ -256,3 +258,53 @@
         top: 0rem;
     }
 }
+
+/* Hide login button on mobile */
+@media screen and (max-width: 768px) {
+    .login-btn {
+        display: none;
+    }
+}
+
+/* .login-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  } */
+  
+  /* .login-modal-content {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    border-radius: 10px;
+    position: relative;
+    animation: slideIn 0.3s ease-out;
+  } */
+  
+  @keyframes slideIn {
+    from {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  /* .login-close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 1.8rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+  } */
+  

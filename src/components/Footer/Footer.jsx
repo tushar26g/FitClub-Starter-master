@@ -34,16 +34,28 @@ const Footer = () => {
           <h3>Quick Links</h3>
           <ul>
             <li className="footer-li">
-              <Link to="header">Home</Link>
+              <Link to="header"
+              spy={true}
+              smooth={true}
+              duration={500}>Home</Link>
             </li>
             <li className="footer-li">
-              <Link to="testimonials">About Us</Link>
+              <Link to="testimonials"
+              spy={true}
+              smooth={true}
+              duration={500}>About Us</Link>
             </li>
             <li className="footer-li">
-              <Link to="programs">Services</Link>
+              <Link to="programs"
+              spy={true}
+              smooth={true}
+              duration={500}>Services</Link>
             </li>
             <li className="footer-li">
-              <Link to="contactUs">Contact</Link>
+              <Link to="contactUs"
+              spy={true}
+              smooth={true}
+              duration={500}>Contact Us</Link>
             </li>
           </ul>
         </div>

@@ -17,6 +17,8 @@
   flex-direction: column;
   gap: 6rem;
   overflow: hidden;
+  /* font-family: sans-serif; */
+  /* text-align: center; */
 }
 ::-webkit-scrollbar{
   display: none;
