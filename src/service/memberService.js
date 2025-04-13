@@ -1,19 +1,58 @@
 import axios from 'axios';
-import configURL from '../Configurations/configURL';
+import configURL from '../config/configURL';
 
 const {
   addMemberURL,
-  getMembersByGymOwnerURL,
+  getMembersByOwnerURL, // ✅ Fixed name
   deleteMemberURL,
   updateMembershipStatusURL,
   updateMemberURL
 } = configURL;
 
-const addMember = async (data) => await axios.post(addMemberURL, data);
-const getMembers = async () => await axios.get(getMembersByGymOwnerURL);
-const deleteMember = async (memberId) => await axios.delete(`${deleteMemberURL}?id=${memberId}`);
-const updateStatus = async (data) => await axios.post(updateMembershipStatusURL, data);
-const updateMember = async (data) => await axios.put(updateMemberURL, data);
+const addMember = async (data) => {
+  const token = localStorage.getItem('token');
+  return await axios.post(addMemberURL, data, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
+const getMembers = async () => {
+  const token = localStorage.getItem('token');
+  return await axios.get(getMembersByOwnerURL, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
+const deleteMember = async (memberId) => {
+  const token = localStorage.getItem('token');
+  return await axios.delete(`${deleteMemberURL}?id=${memberId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
+const updateStatus = async (data) => {
+  const token = localStorage.getItem('token');
+  return await axios.post(updateMembershipStatusURL, data, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
+const updateMember = async (data) => {
+  const token = localStorage.getItem('token');
+  return await axios.put(updateMemberURL, data, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
 
 export default {
   addMember,

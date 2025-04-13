@@ -1,0 +1,47 @@
+.MainDash {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 2rem;
+  gap: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dashboard-heading {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.main-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Tablets */
+@media screen and (max-width: 1200px) {
+  .MainDash {
+    margin-top: 2rem;
+    padding: 1rem;
+  }
+}
+
+/* Mobile Devices */
+@media screen and (max-width: 768px) {
+  .MainDash {
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .dashboard-heading {
+    font-size: 1.5rem;
+  }
+
+  .main-content-wrapper {
+    width: 100%;
+    gap: 1.5rem;
+  }
+}
