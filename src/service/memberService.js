@@ -9,14 +9,16 @@ const {
   updateMemberURL
 } = configURL;
 
-const addMember = async (data) => {
+const addMember = async (formData) => {
   const token = localStorage.getItem('token');
-  return await axios.post(addMemberURL, data, {
+  return await axios.post(addMemberURL, formData, {
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data'
     }
   });
 };
+
 
 const getMembers = async () => {
   const token = localStorage.getItem('token');
