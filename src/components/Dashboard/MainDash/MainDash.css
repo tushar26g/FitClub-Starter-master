@@ -5,6 +5,9 @@
   gap: 2rem;
   width: 100%;
   box-sizing: border-box;
+  overflow-y: auto;
+  height: auto;
+  min-height: 100%;
 }
 
 .dashboard-heading {

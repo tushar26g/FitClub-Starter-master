@@ -12,7 +12,7 @@ const AddMember = ({ onMemberAdded }) => {
     amountPaid: "",
     email: "",
     paymentMethod: "CASH",
-    packageName: "1 Month",
+    packageName: "",
     joiningDate: today,
     membershipEndDate: today,
     weight: "",
@@ -85,7 +85,7 @@ const AddMember = ({ onMemberAdded }) => {
         amountPaid: "",
         email: "",
         paymentMethod: "CASH",
-        packageName: "1 Month",
+        packageName: "",
         joiningDate: today,
         membershipEndDate: today,
         weight: "",
@@ -187,7 +187,7 @@ const AddMember = ({ onMemberAdded }) => {
 
         <label>
           Profile Photo
-          <input type="file" accept="image/*" onChange={handlePhotoChange} />
+          <input type="file" accept=".png,.jpg,.jpeg,.webp, .PNG" capture="environment"  onChange={handlePhotoChange} />
         </label>
 
         <button type="submit" className="submit-button">Add Member</button>

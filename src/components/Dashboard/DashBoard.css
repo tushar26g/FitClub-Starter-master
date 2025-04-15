@@ -23,8 +23,11 @@
   gap: 1rem;
   grid-template-columns: 15rem auto 18rem;
   overflow: hidden;
-  height: 95vh;
+  /* Remove the fixed height */
+  /* height: 95vh; */
+  min-height: 100vh;
 }
+
 
 /* Medium screen (tablets and small laptops) */
 @media screen and (max-width: 1200px) {

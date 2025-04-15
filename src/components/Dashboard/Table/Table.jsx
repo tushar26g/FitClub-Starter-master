@@ -7,8 +7,14 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Avatar
+  Avatar,
+  TextField,
+  Button
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import DownloadIcon from "@mui/icons-material/Download";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 import "./Table.css";
 import memberService from "../../../service/memberService";
 
@@ -25,6 +31,8 @@ const getStatusStyle = (status) => {
 
 export default function BasicTable() {
   const [members, setMembers] = useState([]);
+  const [filteredMembers, setFilteredMembers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -32,6 +40,7 @@ export default function BasicTable() {
         const response = await memberService.getMembers();
         if (response.data.success) {
           setMembers(response.data.data);
+          setFilteredMembers(response.data.data);
         }
       } catch (error) {
         console.error("Error fetching members", error);
@@ -41,9 +50,62 @@ export default function BasicTable() {
     fetchMembers();
   }, []);
 
+  useEffect(() => {
+    const filtered = members.filter((m) =>
+      m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.mobileNumber.includes(searchTerm)
+    );
+    setFilteredMembers(filtered);
+  }, [searchTerm, members]);
+
+  const exportToExcel = () => {
+    const sheetData = filteredMembers.map((member) => ({
+      Name: member.name,
+      "Mobile Number": member.mobileNumber,
+      "Membership End Date": member.membershipEndDate,
+      Status: member.membershipStatus
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(sheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Members");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array"
+    });
+
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(data, "members.xlsx");
+  };
+
   return (
     <div className="Table">
-      <h3>My Members</h3>
+      <div className="table-header">
+        <h3>My Members</h3>
+
+        <div className="table-actions">
+          <TextField
+            size="small"
+            placeholder="Search by name or mobile"
+            variant="outlined"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment: <SearchIcon />
+            }}
+          />
+          <Button
+            variant="contained"
+            style={{ backgroundColor: "var(--orange)", color: "white", marginLeft: "1rem" }}
+            startIcon={<DownloadIcon />}
+            onClick={exportToExcel}
+          >
+            Export
+          </Button>
+        </div>
+      </div>
+
       <TableContainer component={Paper} className="tableContainer">
         <Table aria-label="simple table">
           <TableHead>
@@ -57,12 +119,26 @@ export default function BasicTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {members.map((member) => (
-              <TableRow key={member.id}>
+            {filteredMembers.map((member, index) => (
+              <TableRow
+                key={member.id}
+                sx={{
+                  backgroundColor: index % 2 === 0 ? "#f0f4f8" : "#ffffff",
+                  "&:hover": {
+                    backgroundColor: "#e1f5fe",
+                    cursor: "pointer"
+                  },
+                  transition: "background-color 0.3s ease"
+                }}
+              >
                 <TableCell>
                   <Avatar
                     alt={member.name}
-                    src={member.profilePhotoUrl}
+                    src={
+                      member.profilePhoto
+                        ? `data:image/jpeg;base64,${member.profilePhoto}`
+                        : "/default-profile.png"
+                    }
                     sx={{ width: 40, height: 40 }}
                   />
                 </TableCell>
