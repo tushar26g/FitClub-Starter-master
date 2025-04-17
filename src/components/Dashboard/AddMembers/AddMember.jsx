@@ -8,22 +8,33 @@ const AddMember = ({ onMemberAdded }) => {
   const [formData, setFormData] = useState({
     name: "",
     mobileNumber: "",
+    gender: "MALE",
     paymentStatus: "COMPLETED",
     amountPaid: "",
     email: "",
     paymentMethod: "CASH",
-    packageName: "",
+    packageName: "1 Month",
     joiningDate: today,
-    membershipEndDate: today,
+    membershipEndDate: "",
     weight: "",
     height: "",
   });
+
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [bmi, setBmi] = useState(null);
-
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const packages = ["1 Month", "3 Months", "6 Months", "12 Months"];
+
+  // Set default membership end date (1 month from joining date)
+  useEffect(() => {
+    const defaultEndDate = new Date(today);
+    defaultEndDate.setMonth(defaultEndDate.getMonth() + 1);
+    setFormData((prev) => ({
+      ...prev,
+      membershipEndDate: defaultEndDate.toISOString().split("T")[0],
+    }));
+  }, []);
 
   useEffect(() => {
     if (formData.weight && formData.height) {
@@ -37,9 +48,15 @@ const AddMember = ({ onMemberAdded }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Mobile number validation
+    if (name === "mobileNumber" && (!/^\d{0,10}$/.test(value))) return;
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  
+  
   const handlePackageChange = (e) => {
     const packageName = e.target.value;
     const months = parseInt(packageName);
@@ -59,33 +76,42 @@ const AddMember = ({ onMemberAdded }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     if (!formData.name || !formData.mobileNumber || !formData.paymentStatus || !formData.amountPaid) {
       setError("Please fill in all required fields.");
       return;
     }
   
+    if (!/^\d{10}$/.test(formData.mobileNumber)) {
+      setError("Mobile number must be exactly 10 digits.");
+      return;
+    }
+  
     try {
+      // your existing submission logic
+  
       const submissionData = new FormData();
       const dto = { ...formData };
       if (bmi) dto.bmi = bmi;
-  
+
       submissionData.append("dto", new Blob([JSON.stringify(dto)], { type: "application/json" }));
       if (profilePhoto) {
         submissionData.append("profilePhoto", profilePhoto);
       }
-  
+
       await memberService.addMember(submissionData);
-  
+
       setMessage("Member added successfully!");
       setError("");
       setFormData({
         name: "",
         mobileNumber: "",
+        gender: "MALE",
         paymentStatus: "COMPLETED",
         amountPaid: "",
         email: "",
         paymentMethod: "CASH",
-        packageName: "",
+        packageName: "1 Month",
         joiningDate: today,
         membershipEndDate: today,
         weight: "",
@@ -99,7 +125,7 @@ const AddMember = ({ onMemberAdded }) => {
       setMessage("");
       setError("Failed to add member. Try again.");
     }
-  };  
+  };
 
   return (
     <motion.div
@@ -108,7 +134,7 @@ const AddMember = ({ onMemberAdded }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <h2>Add New Member</h2>
+      <h1 className="addMember-heading">Add New Member</h1>
       {message && <div className="success-msg">{message}</div>}
       {error && <div className="error-msg">{error}</div>}
 
@@ -119,13 +145,41 @@ const AddMember = ({ onMemberAdded }) => {
         </label>
 
         <label>
-          Mobile Number<span className="required">*</span>
-          <input type="text" name="mobileNumber" value={formData.mobileNumber} onChange={handleChange} />
-        </label>
+  Mobile Number<span className="required">*</span>
+  <input
+    type="text"
+    name="mobileNumber"
+    value={formData.mobileNumber}
+    onChange={handleChange}
+    maxLength={10}
+    pattern="\d{10}"
+    title="Enter a valid 10-digit mobile number"
+  />
+</label>
+
 
         <label>
           Email
           <input type="email" name="email" value={formData.email} onChange={handleChange} />
+        </label>
+
+        {/* Gender */}
+        <label>
+          Gender
+          <div className="gender-options">
+            {["MALE", "FEMALE", "OTHER"].map((g) => (
+              <label key={g} className={`gender-radio ${formData.gender === g ? "selected" : ""}`}>
+                <input
+                  type="radio"
+                  name="gender"
+                  value={g}
+                  checked={formData.gender === g}
+                  onChange={handleChange}
+                />
+                {g}
+              </label>
+            ))}
+          </div>
         </label>
 
         <label>
@@ -146,7 +200,9 @@ const AddMember = ({ onMemberAdded }) => {
           Package<span className="required">*</span>
           <select name="packageName" value={formData.packageName} onChange={handlePackageChange}>
             {packages.map((p, i) => (
-              <option key={i} value={p}>{p}</option>
+              <option key={i} value={p}>
+                {p}
+              </option>
             ))}
           </select>
         </label>
@@ -187,10 +243,12 @@ const AddMember = ({ onMemberAdded }) => {
 
         <label>
           Profile Photo
-          <input type="file" accept=".png,.jpg,.jpeg,.webp, .PNG" capture="environment"  onChange={handlePhotoChange} />
+          <input type="file" accept=".png,.jpg,.jpeg,.webp, .PNG" capture="environment" onChange={handlePhotoChange} />
         </label>
 
-        <button type="submit" className="submit-button">Add Member</button>
+        <button type="submit" className="submit-button">
+          Add Member
+        </button>
       </form>
     </motion.div>
   );

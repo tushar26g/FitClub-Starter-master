@@ -4,6 +4,7 @@ import Sidebar from './SideBar/Sidebar';
 import MainDash from './MainDash/MainDash';
 import RightSide from './RigtSide/RightSide';
 import AddMem from './AddMembers/AddMember'
+import AddStaffForm from './Staff/AddStaffForm';
 
 const Dashboard = () => {
   const owner = JSON.parse(localStorage.getItem('owner'));
@@ -12,7 +13,7 @@ const Dashboard = () => {
     <div className="dashboard">
       <div className="dashboard-container">
         <Sidebar />
-        <MainDash />
+        <AddStaffForm />
         <RightSide />
       </div>
     </div>
