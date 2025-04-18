@@ -28,7 +28,7 @@ function App() {
           {/* <Route path="/auth" element={<AuthPopup show={true} />} /> */}
         </Routes>
 
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </Router>
   );

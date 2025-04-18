@@ -4,11 +4,12 @@ import "./AddMember.css";
 import { motion } from "framer-motion";
 
 const AddMember = ({ onMemberAdded }) => {
+  const [dob, setDob] = useState('');
   const today = new Date().toISOString().split("T")[0];
   const [formData, setFormData] = useState({
     name: "",
     mobileNumber: "",
-    gender: "MALE",
+    gender: "",
     paymentStatus: "COMPLETED",
     amountPaid: "",
     email: "",
@@ -25,7 +26,8 @@ const AddMember = ({ onMemberAdded }) => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const packages = ["1 Month", "3 Months", "6 Months", "12 Months"];
-
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
   // Set default membership end date (1 month from joining date)
   useEffect(() => {
     const defaultEndDate = new Date(today);
@@ -45,6 +47,16 @@ const AddMember = ({ onMemberAdded }) => {
       setBmi(null);
     }
   }, [formData.weight, formData.height]);
+
+  useEffect(() => {
+    if (height && weight) {
+      const heightInMeters = parseFloat(height) / 100;
+      const bmiValue = parseFloat(weight) / (heightInMeters * heightInMeters);
+      setBmi(bmiValue.toFixed(1));
+    } else {
+      setBmi('');
+    }
+  }, [height, weight]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -127,6 +139,37 @@ const AddMember = ({ onMemberAdded }) => {
     }
   };
 
+  const calculateBMI = () => {
+    const h = parseFloat(height) / 100; // convert cm to meters
+    const w = parseFloat(weight);
+    if (h > 0 && w > 0) {
+      const result = (w / (h * h)).toFixed(1);
+      setBmi(result);
+    }
+  };
+
+  const getBMIPosition = () => {
+    const val = parseFloat(bmi);
+    if (!val) return '0%';
+    if (val < 18.5) return '10%';
+    if (val < 25) return '40%';
+    if (val < 30) return '70%';
+    return '90%';
+  };
+
+  const getAge = (dob) => {
+    if (!dob) return '';
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+  
+
   return (
     <motion.div
       className="add-member-container"
@@ -139,13 +182,23 @@ const AddMember = ({ onMemberAdded }) => {
       {error && <div className="error-msg">{error}</div>}
 
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <label>
-          Name<span className="required">*</span>
-          <input type="text" name="name" value={formData.name} onChange={handleChange} />
-        </label>
+      <label>
+  <span>
+    Name<span className="required"> *</span>
+  </span>
+  <input
+    type="text"
+    name="name"
+    value={formData.name}
+    onChange={handleChange}
+  />
+</label>
+
 
         <label>
-  Mobile Number<span className="required">*</span>
+          <span>
+  Mobile Number<span className="required"> *</span>
+  </span>
   <input
     type="text"
     name="mobileNumber"
@@ -183,7 +236,9 @@ const AddMember = ({ onMemberAdded }) => {
         </label>
 
         <label>
-          Amount Paid<span className="required">*</span>
+          <span>
+          Amount Paid<span className="required"> *</span>
+          </span>
           <input type="number" name="amountPaid" value={formData.amountPaid} onChange={handleChange} />
         </label>
 
@@ -197,7 +252,9 @@ const AddMember = ({ onMemberAdded }) => {
         </label>
 
         <label>
-          Package<span className="required">*</span>
+          <span>
+          Package<span className="required"> *</span>
+          </span>
           <select name="packageName" value={formData.packageName} onChange={handlePackageChange}>
             {packages.map((p, i) => (
               <option key={i} value={p}>
@@ -218,28 +275,46 @@ const AddMember = ({ onMemberAdded }) => {
         </label>
 
         <label>
-          Payment Status<span className="required">*</span>
+          <span>
+          Payment Status<span className="required"> *</span>
+          </span>
           <select name="paymentStatus" value={formData.paymentStatus} onChange={handleChange}>
             <option value="COMPLETED">Completed</option>
-            <option value="PENDING">Pending</option>
+            <option value="PARTIAL">Partial</option>
           </select>
         </label>
 
-        <label>
-          Weight (kg)
-          <input type="number" name="weight" value={formData.weight} onChange={handleChange} />
-        </label>
+        <label>Date of Birth:</label>
+<input
+  type="date"
+  value={dob}
+  onChange={(e) => setDob(e.target.value)}
+/>
+{dob && <p>Age: {getAge(dob)} years</p>}
 
-        <label>
-          Height (cm)
-          <input type="number" name="height" value={formData.height} onChange={handleChange} />
-        </label>
+<label>Height (cm):</label>
+<input
+  type="number"
+  value={height}
+  onChange={(e) => setHeight(e.target.value)}
+/>
 
-        {bmi && (
-          <div className="bmi-display">
-            <strong>BMI:</strong> {bmi}
-          </div>
-        )}
+<label>Weight (kg):</label>
+<input
+  type="number"
+  value={weight}
+  onChange={(e) => setWeight(e.target.value)}
+/>
+
+{bmi && (
+  <div className="bmi-bar-container">
+    <div className="bmi-bar">
+      <div className="bmi-indicator" style={{ left: getBMIPosition() }}></div>
+    </div>
+    <p>Your BMI is: {bmi}</p>
+  </div>
+)}
+
 
         <label>
           Profile Photo

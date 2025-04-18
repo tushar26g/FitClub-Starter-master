@@ -21,10 +21,10 @@
   background: var(--glass);
   border-radius: 2rem;
   gap: 1rem;
-  grid-template-columns: 15rem auto 18rem;
+  grid-template-columns: 15rem auto;
   overflow: hidden;
   /* Remove the fixed height */
-  /* height: 95vh; */
+  height: 95vh;
   min-height: 100vh;
 }
 

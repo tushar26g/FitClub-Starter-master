@@ -6,6 +6,7 @@ import Plans from './Plans/Plans'
 import Testimonials from './Testimonials/Testimonials'
 import ContactUs from './ContactUs/ContactUs';
 import { BrowserRouter as Router } from "react-router-dom";
+import Footer from '../Footer/Footer'
 
 const Home = () => {
   return (
@@ -16,6 +17,7 @@ const Home = () => {
         <Plans />
         <ContactUs />
         <Testimonials />
+        < Footer />
     </div>
   )
 }

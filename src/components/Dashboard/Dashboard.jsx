@@ -14,7 +14,7 @@ const Dashboard = () => {
       <div className="dashboard-container">
         <Sidebar />
         <AddStaffForm />
-        <RightSide />
+        {/* <RightSide /> */}
       </div>
     </div>
   );

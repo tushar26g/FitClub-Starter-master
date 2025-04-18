@@ -38,54 +38,93 @@ const AddStaffForm = () => {
   };
 
   return (
-    <div className="add-staff-form-container">
-      <form onSubmit={handleSubmit} className="add-staff-form">
-        <h2>Add New Staff</h2>
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          value={staff.name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="tel"
-          name="mobileNumber"
-          placeholder="Mobile Number"
-          value={staff.mobileNumber}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={staff.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="date"
-          name="joinDate"
-          value={staff.joinDate}
-          onChange={handleChange}
-          required
-        />
-        <select name="status" value={staff.status} onChange={handleChange}>
-          <option value="ACTIVE">Active</option>
-          <option value="INACTIVE">Inactive</option>
-        </select>
-        <input
-          type="text"
-          name="profilePhotoUrl"
-          placeholder="Profile Photo URL"
-          value={staff.profilePhotoUrl}
-          onChange={handleChange}
-        />
-        <button type="submit">Add Staff</button>
+    <motion.div
+      className="add-member-container"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <h1 className="addMember-heading">Add New Member</h1>
+      {message && <div className="success-msg">{message}</div>}
+      {error && <div className="error-msg">{error}</div>}
+
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
+      <label>
+  <span>
+    Name<span className="required"> *</span>
+  </span>
+  <input
+    type="text"
+    name="name"
+    value={formData.name}
+    onChange={handleChange}
+  />
+</label>
+
+
+        <label>
+          <span>
+  Mobile Number<span className="required"> *</span>
+  </span>
+  <input
+    type="text"
+    name="mobileNumber"
+    value={formData.mobileNumber}
+    onChange={handleChange}
+    maxLength={10}
+    pattern="\d{10}"
+    title="Enter a valid 10-digit mobile number"
+  />
+</label>
+
+
+        <label>
+          Email
+          <input type="email" name="email" value={formData.email} onChange={handleChange} />
+        </label>
+
+        {/* Gender */}
+        <label>
+          Gender
+          <div className="gender-options">
+            {["MALE", "FEMALE", "OTHER"].map((g) => (
+              <label key={g} className={`gender-radio ${formData.gender === g ? "selected" : ""}`}>
+                <input
+                  type="radio"
+                  name="gender"
+                  value={g}
+                  checked={formData.gender === g}
+                  onChange={handleChange}
+                />
+                {g}
+              </label>
+            ))}
+          </div>
+        </label>
+
+        <label>
+          Joining Date
+          <input type="date" name="joiningDate" value={formData.joiningDate} onChange={handleChange} />
+        </label>
+
+        <label>Date of Birth:</label>
+<input
+  type="date"
+  value={dob}
+  onChange={(e) => setDob(e.target.value)}
+/>
+{dob && <p>Age: {getAge(dob)} years</p>}
+
+        <label>
+          Profile Photo
+          <input type="file" accept=".png,.jpg,.jpeg,.webp, .PNG" capture="environment" onChange={handlePhotoChange} />
+        </label>
+
+        <button type="submit" className="submit-button">
+          Add Staff
+        </button>
       </form>
-    </div>
+    </motion.div>
   );
 };
 
