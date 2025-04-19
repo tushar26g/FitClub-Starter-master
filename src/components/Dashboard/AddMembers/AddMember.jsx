@@ -4,6 +4,7 @@ import "./AddMember.css";
 import { motion } from "framer-motion";
 
 const AddMember = ({ onMemberAdded }) => {
+  const [packageError, setPackageError] = useState(""); // for error handling
   const [dob, setDob] = useState('');
   const today = new Date().toISOString().split("T")[0];
   const [formData, setFormData] = useState({
@@ -14,18 +15,19 @@ const AddMember = ({ onMemberAdded }) => {
     amountPaid: "",
     email: "",
     paymentMethod: "CASH",
-    packageName: "1 Month",
+    packageName: "",
     joiningDate: today,
     membershipEndDate: "",
     weight: "",
     height: "",
+    dob: "",
   });
 
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [bmi, setBmi] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const packages = ["1 Month", "3 Months", "6 Months", "12 Months"];
+  const packages = ["Select Package", "1 Month", "3 Months", "6 Months", "12 Months"];
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   // Set default membership end date (1 month from joining date)
@@ -39,14 +41,26 @@ const AddMember = ({ onMemberAdded }) => {
   }, []);
 
   useEffect(() => {
+    if (message || error) {
+      // Reset message or error after 3 seconds to allow for re-triggering
+      setTimeout(() => {
+        setMessage("");
+        setError("");
+      }, 3000);
+    }
+  }, [message, error]);
+  
+
+  useEffect(() => {
     if (formData.weight && formData.height) {
-      const heightInMeters = formData.height / 100;
-      const bmiValue = (formData.weight / (heightInMeters ** 2)).toFixed(2);
-      setBmi(bmiValue);
+      const heightInMeters = parseFloat(formData.height) / 100;
+      const bmiValue = parseFloat(formData.weight) / (heightInMeters * heightInMeters);
+      setBmi(bmiValue.toFixed(1));
     } else {
-      setBmi(null);
+      setBmi('');
     }
   }, [formData.weight, formData.height]);
+  
 
   useEffect(() => {
     if (height && weight) {
@@ -65,21 +79,45 @@ const AddMember = ({ onMemberAdded }) => {
     if (name === "mobileNumber" && (!/^\d{0,10}$/.test(value))) return;
 
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    
+      // Clear the packageError if the user selects a valid option
+      if (name === "packageName" && value !== "Select Package") {
+        setPackageError(""); // Clear error when a valid package is selected
+      }
+    
   };
 
   
   
   const handlePackageChange = (e) => {
-    const packageName = e.target.value;
-    const months = parseInt(packageName);
+    const selectedPackage = e.target.value;
     const startDate = new Date(formData.joiningDate);
-    const endDate = new Date(startDate);
-    endDate.setMonth(startDate.getMonth() + months);
-    setFormData({
-      ...formData,
-      packageName,
-      membershipEndDate: endDate.toISOString().split("T")[0],
-    });
+    let endDate = new Date(startDate);
+  
+    if (selectedPackage === "1 Month") {
+      endDate.setMonth(endDate.getMonth() + 1);
+    } else if (selectedPackage === "3 Months") {
+      endDate.setMonth(endDate.getMonth() + 3);
+    } else if (selectedPackage === "6 Months") {
+      endDate.setMonth(endDate.getMonth() + 6);
+    } else if (selectedPackage === "12 Months") {
+      endDate.setFullYear(endDate.getFullYear() + 1);
+    } else {
+      endDate = ""; // fallback
+    }
+  
+    setFormData((prev) => ({
+      ...prev,
+      packageName: selectedPackage,
+      membershipEndDate: endDate
+        ? endDate.toISOString().split("T")[0]
+        : "",
+    }));
   };
 
   const handlePhotoChange = (e) => {
@@ -88,56 +126,92 @@ const AddMember = ({ onMemberAdded }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    
+    // Validate required fields
     if (!formData.name || !formData.mobileNumber || !formData.paymentStatus || !formData.amountPaid) {
       setError("Please fill in all required fields.");
       return;
     }
   
+    // Validate mobile number
     if (!/^\d{10}$/.test(formData.mobileNumber)) {
       setError("Mobile number must be exactly 10 digits.");
       return;
     }
-  
+
+    if (!formData.packageName || formData.packageName === "Select Package") {
+      setError("Please select a valid membership package");
+      return;
+    }
+    
+    const nextMonth = new Date();
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    const oneMonthLater = nextMonth.toISOString().split("T")[0];
+
     try {
-      // your existing submission logic
-  
+      // Prepare form data
       const submissionData = new FormData();
       const dto = { ...formData };
       if (bmi) dto.bmi = bmi;
-
+  
       submissionData.append("dto", new Blob([JSON.stringify(dto)], { type: "application/json" }));
       if (profilePhoto) {
         submissionData.append("profilePhoto", profilePhoto);
       }
-
-      await memberService.addMember(submissionData);
-
-      setMessage("Member added successfully!");
-      setError("");
-      setFormData({
-        name: "",
-        mobileNumber: "",
-        gender: "MALE",
-        paymentStatus: "COMPLETED",
-        amountPaid: "",
-        email: "",
-        paymentMethod: "CASH",
-        packageName: "1 Month",
-        joiningDate: today,
-        membershipEndDate: today,
-        weight: "",
-        height: "",
-      });
-      setProfilePhoto(null);
-      setBmi(null);
-      onMemberAdded();
+  
+      // API call
+      const response = await memberService.addMember(submissionData);
+  
+      // Handle success response from backend
+      if (response?.data?.success) {
+        setMessage(response.data.message || "Member added successfully!");
+        setError("");
+        setTimeout(() => setMessage(""), 3000);
+  
+        // Clear form
+        setFormData({
+          name: "",
+          mobileNumber: "",
+          gender: "",
+          paymentStatus: "COMPLETED",
+          amountPaid: "",
+          email: "",
+          paymentMethod: "CASH",
+          packageName: "",
+          joiningDate: today,
+          membershipEndDate: oneMonthLater,
+          weight: "",
+          height: "",
+        });
+        setProfilePhoto(null);
+        setBmi(null);
+  
+        // Safely call parent callback
+        if (typeof onMemberAdded === "function") {
+          onMemberAdded();
+        }
+      } else {
+        // If success is false but status 200 (edge case)
+        setError(response?.data?.message || "Failed to add member.");
+        setMessage("");
+        setTimeout(() => setError(""), 3000);
+      }
+  
     } catch (err) {
-      console.error(err);
+      console.error("Add Member Error:", err);
+  
+      // If backend sends error with response (like 409 Conflict)
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Failed to add member. Try again.");
+      }
+  
       setMessage("");
-      setError("Failed to add member. Try again.");
+      setTimeout(() => setError(""), 3000);
     }
   };
+  
 
   const calculateBMI = () => {
     const h = parseFloat(height) / 100; // convert cm to meters
@@ -178,8 +252,13 @@ const AddMember = ({ onMemberAdded }) => {
       transition={{ duration: 0.4 }}
     >
       <h1 className="addMember-heading">Add New Member</h1>
-      {message && <div className="success-msg">{message}</div>}
-      {error && <div className="error-msg">{error}</div>}
+      {message && (
+  <div className="toast toast-success">{message}</div>
+)}
+{error && (
+  <div className="toast toast-error">{error}</div>
+)}
+
 
       <form onSubmit={handleSubmit} encType="multipart/form-data">
       <label>
@@ -255,13 +334,19 @@ const AddMember = ({ onMemberAdded }) => {
           <span>
           Package<span className="required"> *</span>
           </span>
-          <select name="packageName" value={formData.packageName} onChange={handlePackageChange}>
+          <select
+    name="packageName"
+    value={formData.packageName}
+    onChange={handlePackageChange}
+    className={packageError ? "error" : ""}
+  >
             {packages.map((p, i) => (
               <option key={i} value={p}>
                 {p}
               </option>
             ))}
           </select>
+          {packageError && <p className="error-message">{packageError}</p>}
         </label>
 
         <label>
@@ -285,25 +370,42 @@ const AddMember = ({ onMemberAdded }) => {
         </label>
 
         <label>Date of Birth:</label>
-<input
+        <input
   type="date"
-  value={dob}
-  onChange={(e) => setDob(e.target.value)}
+  name="dob"
+  value={formData.dob}
+  onChange={handleChange}
 />
 {dob && <p>Age: {getAge(dob)} years</p>}
 
 <label>Height (cm):</label>
 <input
   type="number"
-  value={height}
-  onChange={(e) => setHeight(e.target.value)}
+  name="height"
+  value={formData.height}
+  onChange={(e) => {
+    const value = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      height: value === '' ? '' : parseFloat(value),
+    }));
+    setHeight(value); // Optional: only if you need this state separately
+  }}
 />
 
 <label>Weight (kg):</label>
 <input
   type="number"
-  value={weight}
-  onChange={(e) => setWeight(e.target.value)}
+  name="weight"
+  value={formData.weight}
+  onChange={(e) => {
+    const value = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      weight: value === '' ? '' : parseFloat(value),
+    }));
+    setWeight(value); // Optional
+  }}
 />
 
 {bmi && (

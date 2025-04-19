@@ -13,7 +13,7 @@ const Dashboard = () => {
     <div className="dashboard">
       <div className="dashboard-container">
         <Sidebar />
-        <AddStaffForm />
+        <AddMem />
         {/* <RightSide /> */}
       </div>
     </div>
