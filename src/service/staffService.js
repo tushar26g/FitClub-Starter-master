@@ -16,14 +16,15 @@ const getAuthHeaders = () => {
   };
 };
 
-const addStaff = async (formData) => {
-  return await axios.post(addStaffURL, formData, {
-    headers: {
-      ...getAuthHeaders(),
-      'Content-Type': 'multipart/form-data'
-    }
-  });
-};
+  const addStaff = async (formData) => {
+    const token = localStorage.getItem('token');
+    return await axios.post(addStaffURL, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  };
 
 const getStaffList = async () => {
   return await axios.get(getStaffByGymOwnerURL, {

@@ -147,7 +147,7 @@ export default function BasicTable() {
                 <TableCell align="left">{member.membershipEndDate}</TableCell>
                 <TableCell align="left">
                   <span className="status" style={getStatusStyle(member.membershipStatus)}>
-                    {member.membershipStatus}
+                  {member.membershipStatus?.toUpperCase() === "SUSPENDED" ? "Expired" : member.membershipStatus}
                   </span>
                 </TableCell>
                 <TableCell align="left" className="Details">

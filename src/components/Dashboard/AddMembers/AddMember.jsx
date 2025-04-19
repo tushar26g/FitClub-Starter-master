@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import memberService from "../../../service/memberService";
 import "./AddMember.css";
 import { motion } from "framer-motion";
 
 const AddMember = ({ onMemberAdded }) => {
+   const fileInputRef = useRef(null);
   const [packageError, setPackageError] = useState(""); // for error handling
   const [dob, setDob] = useState('');
   const today = new Date().toISOString().split("T")[0];
@@ -168,6 +169,9 @@ const AddMember = ({ onMemberAdded }) => {
         setError("");
         setTimeout(() => setMessage(""), 3000);
   
+        fileInputRef.current.value = ""; // 👈 Clear file input
+        setProfilePhoto(null); 
+
         // Clear form
         setFormData({
           name: "",
@@ -182,6 +186,7 @@ const AddMember = ({ onMemberAdded }) => {
           membershipEndDate: oneMonthLater,
           weight: "",
           height: "",
+          dob: "",
         });
         setProfilePhoto(null);
         setBmi(null);
@@ -420,7 +425,8 @@ const AddMember = ({ onMemberAdded }) => {
 
         <label>
           Profile Photo
-          <input type="file" accept=".png,.jpg,.jpeg,.webp, .PNG" capture="environment" onChange={handlePhotoChange} />
+          <input type="file" accept=".png,.jpg,.jpeg,.webp, .PNG" capture="environment" onChange={handlePhotoChange}
+            ref={fileInputRef} />
         </label>
 
         <button type="submit" className="submit-button">
