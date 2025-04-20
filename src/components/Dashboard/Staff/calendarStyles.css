@@ -1,0 +1,9 @@
+.react-calendar {
+    border-radius: 8px;
+    padding: 10px;
+    font-family: "Roboto", sans-serif;
+  }
+  .react-calendar__tile {
+    position: relative;
+  }
+  

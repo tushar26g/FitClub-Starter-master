@@ -6,7 +6,7 @@ const {
   updateStaffURL,
   deleteStaffURL,
   updateStaffStatusURL,
-  getStaffByGymOwnerURL
+  getStaffByOwnerURL
 } = configURL;
 
 const getAuthHeaders = () => {
@@ -26,19 +26,21 @@ const getAuthHeaders = () => {
     });
   };
 
-  const getStaffList = async (search = "", interestLevel = "") => {
+  const getStaffList = async (search = "", status = "BOTH") => {
     const token = localStorage.getItem("token");
   
     const params = new URLSearchParams();
     if (search) params.append("search", search);
+    if (status) params.append("status", status); // Add status param
   
-    return await axios.get(`${getStaffByGymOwnerURL}?${params.toString()}`, {
+    return await axios.get(`${getStaffByOwnerURL}?${params.toString()}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json"
       }
     });
   };
+  
 
 const deleteStaff = async (staffId) => {
   const token = localStorage.getItem("token");
@@ -47,7 +49,7 @@ const deleteStaff = async (staffId) => {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json"
     },
-    data: { enquiryId }
+    data: { staffId }
   });
 };
 const updateStatus = async (data) => {

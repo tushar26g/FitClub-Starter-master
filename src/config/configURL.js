@@ -26,7 +26,7 @@ const configURL = {
   markAttendanceURL: `${baseURL}/attendance/mark`,
   markLeaveRangeURL: `${baseURL}/attendance/mark-leave`,
   getAttendanceHistoryURL: `${baseURL}/attendance/history`,
-  getStaffAttendanceURL: `${baseURL}/attendance/staff`, // use /{staffId}/attendance when calling
+  getStaffAttendanceURL: `${baseURL}/attendance/staff/{staffId}/attendance`, // use /{staffId}/attendance when calling
 
   // Staff URLs
   addStaffURL: `${baseURL}/staff/add`,
