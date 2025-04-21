@@ -2,11 +2,15 @@
     border-radius: 8px;
     padding: 10px;
     font-family: "Roboto", sans-serif;
-    background-color:beige;
+    /* background-color:beige; */
+    background-color: #FFDEE9;
+background-image: linear-gradient(0deg, #FFDEE9 0%, #B5FFFC 100%);
+
   }
   .react-calendar__tile {
     position: relative;
-    background-color:cornsilk;
+    /* background-color:cornsilk; */
+    
   }
   
   .present-day {

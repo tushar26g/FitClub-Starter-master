@@ -15,7 +15,7 @@
 }
 
 .dashboard-container {
-  display: grid;
+  display: flex;
   width: 100%;
   max-width: 1440px;
   background: var(--glass);
@@ -28,6 +28,11 @@
   min-height: 100vh;
 }
 
+.dashboard-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
 
 /* Medium screen (tablets and small laptops) */
 @media screen and (max-width: 1200px) {

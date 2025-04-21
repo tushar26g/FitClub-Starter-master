@@ -1,12 +1,15 @@
 import './App.css';
-import Footer from './components/Footer/Footer';
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './components/Home/Home';
-import Dashboard from '../src/components/Dashboard/Dashboard'; // Create this file as discussed
-import AuthPopup from './components/Auth/AuthPopup'; // Optional: if you want to open login/register directly via route
+import DashboardLayout from './components/Dashboard/Dashboard';
+import MainDash from './components/Dashboard/MainDash/MainDash';
+import AddMem from './components/Dashboard/AddMembers/AddMember';
+import Enquiry from './components/Dashboard/Enquiry/Enquiry';
+import EnquiryTable from './components/Dashboard/Enquiry/EnquiryTable';
+import AddStaffForm from './components/Dashboard/Staff/AddStaffForm';
+import StaffTable from './components/Dashboard/Staff/StaffTable';
 
 function App() {
-  // Optional: auth check function
   const isAuthenticated = () => {
     return localStorage.getItem('token') !== null;
   };
@@ -15,20 +18,19 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          {/* Homepage */}
           <Route path="/" element={<Home />} />
-
-          {/* Dashboard - Protected Route (optional check) */}
           <Route
             path="/dashboard"
-            element={isAuthenticated() ? <Dashboard /> : <Navigate to="/" />}
-          />
-
-          {/* Optional: open login/register popup directly */}
-          {/* <Route path="/auth" element={<AuthPopup show={true} />} /> */}
+            element={isAuthenticated() ? <DashboardLayout /> : <Navigate to="/" />}
+          >
+            <Route index element={<MainDash />} />
+            <Route path="add-member" element={<AddMem />} />
+            <Route path="add-enquiry" element={<Enquiry />} />
+            <Route path="add-staff" element={<AddStaffForm />} />
+            <Route path="view-enquiry" element={<EnquiryTable />} />
+            <Route path="view-staff" element={<StaffTable />} />
+          </Route>
         </Routes>
-
-        {/* <Footer /> */}
       </div>
     </Router>
   );

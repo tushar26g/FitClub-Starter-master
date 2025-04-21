@@ -4,6 +4,8 @@ import {
     UilClipboardAlt,
     UilUsersAlt,
     UilPackage,
+    UilUserPlus,
+    UilUserMd,
     UilChart,
     UilSignOutAlt,
   } from "@iconscout/react-unicons";
@@ -18,36 +20,17 @@ import {
   import img3 from "../imgs/img3.png";
   
   // Sidebar Data
-  export const SidebarData = [
-    {
-      icon: UilEstate,
-      heading: "Dashboard",
-    },
-    {
-      icon: UilUsersAlt,
-      heading: "Add Member",
-    },
-    {
-      icon: UilClipboardAlt,
-      heading: "Veiw Members",
-    },
-    {
-      icon: UilPackage,
-      heading: 'Add Enquiry'
-    },
-    {
-      icon: UilChart,
-      heading: 'View enquiry'
-    },
-    {
-      icon: UilUsersAlt,
-      heading: "Add Staff",
-    },
-    {
-      icon: UilClipboardAlt,
-      heading: "Staff Attendance",
-    },
-  ];
+  // import { UilEstate, UilUserPlus, UilUserMd, UilClipboardAlt, UilUsersAlt } from '@iconscout/react-unicons';
+
+export const SidebarData = [
+  { icon: UilEstate, heading: "Dashboard", path: "/dashboard" },
+  { icon: UilUserPlus, heading: "Add Member", path: "/dashboard/add-member" },
+  { icon: UilClipboardAlt, heading: "Add Enquiry", path: "/dashboard/add-enquiry" },
+  { icon: UilUserMd, heading: "Add Staff", path: "/dashboard/add-staff" },
+  { icon: UilClipboardAlt, heading: "View Enquiry", path: "/dashboard/view-enquiry" },
+  { icon: UilUsersAlt, heading: "View Staff", path: "/dashboard/view-staff" }
+];
+
   
   // Analytics Cards Data
   export const cardsData = [
