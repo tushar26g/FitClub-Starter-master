@@ -15,9 +15,10 @@ import attendanceService from '../../../service/attendanceService';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './calendarStyles.css'; // you'll create this for custom date styling
-import { Dialog, DialogTitle, DialogContent, IconButton, Tooltip, MenuItem, Select } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, IconButton, Tooltip, MenuItem, Select, Box  } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import './calendarStyles.css';
+import CloseIcon from '@mui/icons-material/Close';
+import { lightBlue, red } from '@mui/material/colors';
 
 export default function StaffTable() {
     const [attendanceDialogOpen, setAttendanceDialogOpen] = useState(false);
@@ -262,28 +263,75 @@ const [attendanceData, setAttendanceData] = useState([]);
           {snackbarMessage}
         </MuiAlert>
       </Snackbar>
-      <Dialog open={attendanceDialogOpen} onClose={() => setAttendanceDialogOpen(false)} maxWidth="xs" fullWidth>
-  <DialogTitle>Attendance Calendar</DialogTitle>
+      <Dialog
+  open={attendanceDialogOpen}
+  onClose={() => setAttendanceDialogOpen(false)}
+  maxWidth="xs"
+  fullWidth
+  PaperProps={{
+    sx: {
+      backgroundColor: 'aliceblue', // light custom yellow
+    },
+  }}
+>
+  <DialogTitle>
+    <Box display="flex" justifyContent="space-between" alignItems="center">
+      Attendance Calendar
+      <IconButton
+  onClick={() => setAttendanceDialogOpen(false)}
+  sx={{
+    color: '#f44336',
+    transition: "all 0.3s ease",
+    "&:hover": {
+      backgroundColor: '#f44336',
+      color: "var(--appColor)",
+    },
+    borderRadius: "50%",
+  }}
+>
+  <CloseIcon />
+</IconButton>
+
+    </Box>
+  </DialogTitle>
+
   <DialogContent>
     <Calendar
-      tileContent={({ date }) => {
-        const entry = attendanceData.find((a) => new Date(a.date).toDateString() === date.toDateString());
+      tileClassName={({ date }) => {
+        const entry = attendanceData.find(
+          (a) => new Date(a.date).toDateString() === date.toDateString()
+        );
+
         if (!entry) return null;
 
-        const statusMap = {
-          PRESENT: { label: "P", color: "green" },
-          ABSENT: { label: "A", color: "red" },
-          LEAVE: { label: "L", color: "orange" },
+        const statusClassMap = {
+          PRESENT: "present-day",
+          ABSENT: "absent-day",
+          LEAVE: "leave-day",
         };
 
-        const { label, color } = statusMap[entry.status];
+        return statusClassMap[entry.status];
+      }}
+      tileContent={({ date }) => {
+        const entry = attendanceData.find(
+          (a) => new Date(a.date).toDateString() === date.toDateString()
+        );
+        if (!entry) return null;
+
+        const labelMap = {
+          PRESENT: { label: "P", color: "#2E7D32" },
+          ABSENT: { label: "A", color: "#C62828" },
+          LEAVE: { label: "L", color: "#FF6F00" },
+        };
+
+        const { label, color } = labelMap[entry.status];
+
         return (
           <div
             style={{
-              fontSize: "0.8rem",
               fontWeight: "bold",
               color,
-              textAlign: "center",
+              fontSize: "0.9rem",
               marginTop: "4px",
             }}
           >

@@ -2,8 +2,38 @@
     border-radius: 8px;
     padding: 10px;
     font-family: "Roboto", sans-serif;
+    background-color:beige;
   }
   .react-calendar__tile {
     position: relative;
+    background-color:cornsilk;
+  }
+  
+  .present-day {
+    background-color: #C8E6C9 !important; /* Light green */
+    border-radius: 8px;
+  }
+  
+  .absent-day {
+    background-color: #FFCDD2 !important; /* Light red */
+    border-radius: 8px;
+  }
+  
+  .leave-day {
+    background-color: #FFE082 !important; /* Light yellow */
+    border-radius: 8px;
+  }
+  
+  .react-calendar__tile {
+    position: relative;
+    height: 50px;
+    text-align: center;
+    padding: 8px;
+  }
+  
+  /* Optional hover effect */
+  .react-calendar__tile:hover {
+    filter: brightness(0.95);
+    cursor: pointer;
   }
   
