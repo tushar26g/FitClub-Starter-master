@@ -137,10 +137,6 @@
     color: red;
   }
   
-  .bmi-bar-container {
-    margin-top: 1rem;
-  }
-  
   .bmi-bar {
     position: relative;
     width: 100%;

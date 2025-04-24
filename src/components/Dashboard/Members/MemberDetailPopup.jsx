@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -22,6 +22,7 @@ const genderOptions = ["MALE", "FEMALE", "OTHER"];
 const MemberDetailPopup = ({ member, onClose, onUpdate }) => {
   const [editMode, setEditMode] = useState(false);
   const [editData, setEditData] = useState({ ...member });
+    const [bmi, setBmi] = useState(null);
 
   const handleInputChange = (field, value) => {
     setEditData((prev) => ({ ...prev, [field]: value }));
@@ -43,6 +44,25 @@ const MemberDetailPopup = ({ member, onClose, onUpdate }) => {
   const handleSave = () => {
     onUpdate(editData);
     setEditMode(false);
+  };
+
+useEffect(() => {
+    if (member.weight && member.height) {
+      const heightInMeters = parseFloat(member.height) / 100;
+      const bmiValue = parseFloat(member.weight) / (heightInMeters * heightInMeters);
+      setBmi(bmiValue.toFixed(1));
+    } else {
+      setBmi('');
+    }
+  }, [member.weight, member.height]);
+
+  const getBMIPosition = () => {
+    const val = parseFloat(bmi);
+    if (!val) return '0%';
+    if (val < 18.5) return '10%';
+    if (val < 25) return '40%';
+    if (val < 30) return '70%';
+    return '90%';
   };
 
   return (
@@ -133,8 +153,6 @@ const MemberDetailPopup = ({ member, onClose, onUpdate }) => {
               <h2 style={{ textAlign: "center", marginTop: "1rem" }}>{member.name}</h2>
               <p><strong>Mobile Number:</strong> {member.mobileNumber}</p>
               <p><strong>Email:</strong> {member.email || "N/A"}</p>
-              <p><strong>Gender:</strong> {member.gender || "N/A"}</p>
-              <p><strong>Date of Birth:</strong> {formatDate(member.dob)}</p>
               <p><strong>Join Date:</strong> {formatDate(member.joiningDate)}</p>
               <p><strong>Membership Renew Date:</strong> {formatDate(member.renewDate)}</p>
               <p><strong>Membership End:</strong> {formatDate(member.membershipEndDate)}</p>
@@ -144,6 +162,18 @@ const MemberDetailPopup = ({ member, onClose, onUpdate }) => {
                   {member.membershipStatus?.toUpperCase() === "SUSPENDED" ? "Expired" : member.membershipStatus}
                 </span>
               </p>
+              <p><strong>Gender:</strong> {member.gender || "N/A"}</p>
+              <p><strong>Date of Birth:</strong> {formatDate(member.dob)}</p>
+              <p><strong>Height:</strong> {member.height || "N/A"} cm</p>
+              <p><strong>Weight:</strong> {member.weight || "N/A"} KG</p>
+              {bmi && (
+  <div className="bmi-bar-container">
+    <p><strong>BMI:</strong>{bmi}</p>
+    <div className="bmi-bar">
+      <div className="bmi-indicator" style={{ left: getBMIPosition() }}></div>
+    </div>
+  </div>
+)}
             </div>
           )}
         </div>
@@ -154,7 +184,7 @@ const MemberDetailPopup = ({ member, onClose, onUpdate }) => {
           <>
             <Button variant="outlined" onClick={() => setEditMode(false)}>Cancel</Button>
             <Button variant="contained" sx={{ backgroundColor: "var(--orange)", color: "white" }} onClick={handleSave}>
-              Save
+              Update
             </Button>
           </>
         ) : (
