@@ -1,0 +1,26 @@
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #FFDEE9;
+background-image: linear-gradient(0deg, #FFDEE9 0%, #B5FFFC 100%);
+}
+
+.member-details {
+  margin-top: 1rem;
+  width: 100%;
+  text-align: left;
+}
+
+.member-details p {
+  margin: 0.4rem 0;
+  font-size: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.4rem;
+}
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  

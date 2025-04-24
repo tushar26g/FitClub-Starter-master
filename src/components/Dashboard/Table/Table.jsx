@@ -17,6 +17,7 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import "./Table.css";
 import memberService from "../../../service/memberService";
+import MemberDetailPopup from "../Members/MemberDetailPopup";
 
 const getStatusStyle = (status) => {
   switch (status) {
@@ -30,6 +31,7 @@ const getStatusStyle = (status) => {
 };
 
 export default function BasicTable() {
+  const [selectedMember, setSelectedMember] = useState(null);
   const [members, setMembers] = useState([]);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,8 +64,16 @@ export default function BasicTable() {
     const sheetData = filteredMembers.map((member) => ({
       Name: member.name,
       "Mobile Number": member.mobileNumber,
+      "Join Date": member.joiningDate,
+      "Membership Renew Date": member.renewDate,
       "Membership End Date": member.membershipEndDate,
-      Status: member.membershipStatus
+      "Amount Paid": member.amountPaid,
+      "Payment Method": member.paymentMethod,
+      Status: member.membershipStatus,
+      "Email": member.email,
+      "Height": member.height,
+      "Weight": member.weight,
+      "Gender": member.Gender,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(sheetData);
@@ -122,6 +132,7 @@ export default function BasicTable() {
             {filteredMembers.map((member, index) => (
               <TableRow
                 key={member.id}
+                onClick={() => setSelectedMember(member)}
                 sx={{
                   backgroundColor: index % 2 === 0 ? "#f0f4f8" : "#ffffff",
                   "&:hover": {
@@ -158,6 +169,12 @@ export default function BasicTable() {
           </TableBody>
         </Table>
       </TableContainer>
+      {selectedMember && (
+        <MemberDetailPopup
+        member={selectedMember}
+        onClose={() => setSelectedMember(null)}
+        />
+)}
     </div>
   );
 }
