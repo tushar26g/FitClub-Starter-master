@@ -9,16 +9,19 @@ import {
   Paper,
   Avatar,
   TextField,
-  Button
+  Button,
+  IconButton
 } from "@mui/material";
-import { useSnackbar } from 'notistack'; // Move the hook here
+import { useSnackbar } from 'notistack';
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
+import DeleteIcon from "@mui/icons-material/Delete";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import "./Table.css";
 import memberService from "../../../service/memberService";
-import MemberDetailPopup from "../Members/MemberDetailPopup";
+import { useNavigate } from "react-router-dom";
+import DeleteConfirmationPopup from "./DeleteConfirmationPopup"; 
 
 const getStatusStyle = (status) => {
   switch (status) {
@@ -32,39 +35,13 @@ const getStatusStyle = (status) => {
 };
 
 export default function BasicTable() {
-  const { enqueueSnackbar } = useSnackbar(); // Use hook here
-  const [selectedMember, setSelectedMember] = useState(null);
+  const { enqueueSnackbar } = useSnackbar();
   const [members, setMembers] = useState([]);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
-  const updateMemberHandler = async (updatedData) => {
-    try {
-      const formData = new FormData();
-      formData.append('dto', new Blob([JSON.stringify(updatedData)], { type: 'application/json' }));
-      if (updatedData.profilePhoto) {
-        formData.append('profilePhoto', updatedData.profilePhoto);
-      }
-
-      const response = await memberService.updateMember(formData); // your API call
-      if (response.success) {
-        enqueueSnackbar(response.message, { variant: "success" });
-        // alert(response.message || "Member updated successfully");
-        // Close the pop-ups after successful update
-        setSelectedMember(null);  // Close the MemberDetailPopup
-      } else {
-        enqueueSnackbar(response.message, { variant: "error" });
-        // alert(response.message || "Failed to update member");
-      }
-
-      // Fetch the updated list of members after the update operation
-      fetchMembers();
-
-    } catch (error) {
-      console.error("Update failed:", error);
-      enqueueSnackbar("Update failed. Please try again later.", { variant: "error" });
-    }
-  };
+  const navigate = useNavigate();
+  const [selectedMember, setSelectedMember] = useState(null); // Selected member for deletion
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const fetchMembers = async () => {
     try {
@@ -78,8 +55,29 @@ export default function BasicTable() {
     }
   };
 
+  const handleDeleteClick = (member) => {
+    setSelectedMember(member);
+    setDeleteDialogOpen(true); // Open the delete confirmation popup
+  };
+
+  const handleDeleteConfirm = async (memberId) => {
+    try {
+      const response = await memberService.deleteMember(memberId);
+      if (response.data.success) {
+        enqueueSnackbar(response.data.message, { variant: "success" });
+        setDeleteDialogOpen(false); // Close the popup
+        fetchMembers(); // Refresh the member list
+      } else {
+        enqueueSnackbar(response.data.message, { variant: "error" });
+      }
+    } catch (error) {
+      console.error("Delete failed:", error);
+      enqueueSnackbar("Delete failed. Please try again later.", { variant: "error" });
+    }
+  };
+
   useEffect(() => {
-    fetchMembers(); // Initial data fetch when the component mounts
+    fetchMembers();
   }, []);
 
   useEffect(() => {
@@ -100,21 +98,17 @@ export default function BasicTable() {
       "Amount Paid": member.amountPaid,
       "Payment Method": member.paymentMethod,
       Status: member.membershipStatus,
-      "Email": member.email,
-      "Height": member.height,
-      "Weight": member.weight,
-      "Gender": member.Gender,
+      Email: member.email,
+      Height: member.height,
+      Weight: member.weight,
+      Gender: member.gender,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(sheetData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Members");
 
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array"
-    });
-
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     const data = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(data, "members.xlsx");
   };
@@ -155,14 +149,13 @@ export default function BasicTable() {
               <TableCell align="left">Mobile Number</TableCell>
               <TableCell align="left">Expire Date</TableCell>
               <TableCell align="left">Status</TableCell>
-              <TableCell align="left">Details</TableCell>
+              <TableCell align="left">Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredMembers.map((member, index) => (
               <TableRow
                 key={member.id}
-                onClick={() => setSelectedMember(member)}
                 sx={{
                   backgroundColor: index % 2 === 0 ? "#f0f4f8" : "#ffffff",
                   "&:hover": {
@@ -183,28 +176,38 @@ export default function BasicTable() {
                     sx={{ width: 40, height: 40 }}
                   />
                 </TableCell>
-                <TableCell align="left">{member.name}</TableCell>
-                <TableCell align="left">{member.mobileNumber}</TableCell>
-                <TableCell align="left">{member.membershipEndDate}</TableCell>
-                <TableCell align="left">
+                <TableCell align="left" onClick={() => navigate(`/dashboard/member-details/${member.id}`, { state: { member } })}>
+                  {member.name}
+                </TableCell>
+                <TableCell align="left" onClick={() => navigate(`/dashboard/member-details/${member.id}`, { state: { member } })}>
+                  {member.mobileNumber}
+                </TableCell>
+                <TableCell align="left" onClick={() => navigate(`/dashboard/member-details/${member.id}`, { state: { member } })}>
+                  {member.membershipEndDate}
+                </TableCell>
+                <TableCell align="left" onClick={() => navigate(`/dashboard/member-details/${member.id}`, { state: { member } })}>
                   <span className="status" style={getStatusStyle(member.membershipStatus)}>
                     {member.membershipStatus?.toUpperCase() === "SUSPENDED" ? "Expired" : member.membershipStatus}
                   </span>
                 </TableCell>
-                <TableCell align="left" className="Details">
-                  Details
+                <TableCell align="left" onClick={(e) => {
+                  e.stopPropagation(); // Prevent row navigation on delete icon click
+                  handleDeleteClick(member); // Show delete confirmation dialog
+                }}>
+                  <DeleteIcon sx={{ color: "var(--orange)", cursor: "pointer" }} />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-
+      {/* Delete Confirmation Popup */}
       {selectedMember && (
-        <MemberDetailPopup
+        <DeleteConfirmationPopup
+          open={deleteDialogOpen}
           member={selectedMember}
-          onClose={() => setSelectedMember(null)}
-          onUpdate={updateMemberHandler}
+          onClose={() => setDeleteDialogOpen(false)}
+          onConfirm={handleDeleteConfirm}
         />
       )}
     </div>

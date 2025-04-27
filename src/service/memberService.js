@@ -31,11 +31,19 @@ const getMembers = async () => {
 
 const deleteMember = async (memberId) => {
   const token = localStorage.getItem('token');
-  return await axios.delete(`${deleteMemberURL}?id=${memberId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+  try {
+    const response = await axios.delete(`${deleteMemberURL}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      data: { memberId }, // Important: Send memberId in the body (for DELETE)
+    });
+    return response;
+  } catch (error) {
+    console.error("Error deleting member:", error);
+    throw error;
+  }
 };
 
 const updateStatus = async (data) => {
