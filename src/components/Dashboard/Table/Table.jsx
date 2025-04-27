@@ -11,6 +11,7 @@ import {
   TextField,
   Button
 } from "@mui/material";
+import { useSnackbar } from 'notistack'; // Move the hook here
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import * as XLSX from "xlsx";
@@ -31,25 +32,54 @@ const getStatusStyle = (status) => {
 };
 
 export default function BasicTable() {
+  const { enqueueSnackbar } = useSnackbar(); // Use hook here
   const [selectedMember, setSelectedMember] = useState(null);
   const [members, setMembers] = useState([]);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    const fetchMembers = async () => {
-      try {
-        const response = await memberService.getMembers();
-        if (response.data.success) {
-          setMembers(response.data.data);
-          setFilteredMembers(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching members", error);
+  const updateMemberHandler = async (updatedData) => {
+    try {
+      const formData = new FormData();
+      formData.append('dto', new Blob([JSON.stringify(updatedData)], { type: 'application/json' }));
+      if (updatedData.profilePhoto) {
+        formData.append('profilePhoto', updatedData.profilePhoto);
       }
-    };
 
-    fetchMembers();
+      const response = await memberService.updateMember(formData); // your API call
+      if (response.success) {
+        enqueueSnackbar(response.message, { variant: "success" });
+        // alert(response.message || "Member updated successfully");
+        // Close the pop-ups after successful update
+        setSelectedMember(null);  // Close the MemberDetailPopup
+      } else {
+        enqueueSnackbar(response.message, { variant: "error" });
+        // alert(response.message || "Failed to update member");
+      }
+
+      // Fetch the updated list of members after the update operation
+      fetchMembers();
+
+    } catch (error) {
+      console.error("Update failed:", error);
+      enqueueSnackbar("Update failed. Please try again later.", { variant: "error" });
+    }
+  };
+
+  const fetchMembers = async () => {
+    try {
+      const response = await memberService.getMembers();
+      if (response.data.success) {
+        setMembers(response.data.data);
+        setFilteredMembers(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching members", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMembers(); // Initial data fetch when the component mounts
   }, []);
 
   useEffect(() => {
@@ -158,7 +188,7 @@ export default function BasicTable() {
                 <TableCell align="left">{member.membershipEndDate}</TableCell>
                 <TableCell align="left">
                   <span className="status" style={getStatusStyle(member.membershipStatus)}>
-                  {member.membershipStatus?.toUpperCase() === "SUSPENDED" ? "Expired" : member.membershipStatus}
+                    {member.membershipStatus?.toUpperCase() === "SUSPENDED" ? "Expired" : member.membershipStatus}
                   </span>
                 </TableCell>
                 <TableCell align="left" className="Details">
@@ -169,12 +199,14 @@ export default function BasicTable() {
           </TableBody>
         </Table>
       </TableContainer>
+
       {selectedMember && (
         <MemberDetailPopup
-        member={selectedMember}
-        onClose={() => setSelectedMember(null)}
+          member={selectedMember}
+          onClose={() => setSelectedMember(null)}
+          onUpdate={updateMemberHandler}
         />
-)}
+      )}
     </div>
   );
 }

@@ -41,10 +41,26 @@ const MemberDetailPopup = ({ member, onClose, onUpdate }) => {
     }
   };
 
+  const getUpdatedFields = () => {
+    const updatedFields = {};
+  
+    Object.keys(editData).forEach((key) => {
+      if (editData[key] !== member[key]) {
+        updatedFields[key] = editData[key];
+      }
+    });
+  
+    return updatedFields;
+  };  
+
   const handleSave = () => {
-    onUpdate(editData);
+    const updatedFields = getUpdatedFields();
+    updatedFields.memberId = member.id;
+    if (Object.keys(updatedFields).length > 0) {
+      onUpdate(updatedFields); // Pass only changed fields
+    }
     setEditMode(false);
-  };
+  };  
 
 useEffect(() => {
     if (member.weight && member.height) {
@@ -147,34 +163,84 @@ useEffect(() => {
                 value={editData.dob || ""}
                 onChange={(e) => handleInputChange("dob", e.target.value)}
               />
+              <TextField
+  fullWidth
+  margin="normal"
+  label="Height (in cm)"
+  value={editData.height || ""}
+  onChange={(e) => handleInputChange("height", e.target.value)}
+/>
+
+<TextField
+  fullWidth
+  margin="normal"
+  label="Weight (in kg)"
+  value={editData.weight || ""}
+  onChange={(e) => handleInputChange("weight", e.target.value)}
+/>
+
             </div>
           ) : (
             <div className="member-details">
-              <h2 style={{ textAlign: "center", marginTop: "1rem" }}>{member.name}</h2>
-              <p><strong>Mobile Number:</strong> {member.mobileNumber}</p>
-              <p><strong>Email:</strong> {member.email || "N/A"}</p>
-              <p><strong>Join Date:</strong> {formatDate(member.joiningDate)}</p>
-              <p><strong>Membership Renew Date:</strong> {formatDate(member.renewDate)}</p>
-              <p><strong>Membership End:</strong> {formatDate(member.membershipEndDate)}</p>
-              <p>
-                <strong>Status:</strong>{" "}
-                <span className="status" style={getStatusStyle(member.membershipStatus)}>
-                  {member.membershipStatus?.toUpperCase() === "SUSPENDED" ? "Expired" : member.membershipStatus}
-                </span>
-              </p>
-              <p><strong>Gender:</strong> {member.gender || "N/A"}</p>
-              <p><strong>Date of Birth:</strong> {formatDate(member.dob)}</p>
-              <p><strong>Height:</strong> {member.height || "N/A"} cm</p>
-              <p><strong>Weight:</strong> {member.weight || "N/A"} KG</p>
-              {bmi && (
-  <div className="bmi-bar-container">
-    <p><strong>BMI:</strong>{bmi}</p>
-    <div className="bmi-bar">
-      <div className="bmi-indicator" style={{ left: getBMIPosition() }}></div>
-    </div>
-  </div>
-)}
-            </div>
+  <h2 style={{ textAlign: "center", marginTop: "1rem" }}>{member.name}</h2>
+  <table className="member-details-table">
+    <tbody>
+      <tr>
+        <td><strong>Mobile Number:</strong></td>
+        <td>{member.mobileNumber}</td>
+      </tr>
+      <tr>
+        <td><strong>Email:</strong></td>
+        <td>{member.email || "N/A"}</td>
+      </tr>
+      <tr>
+        <td><strong>Join Date:</strong></td>
+        <td>{formatDate(member.joiningDate)}</td>
+      </tr>
+      <tr>
+        <td><strong>Membership Renew Date:</strong></td>
+        <td>{formatDate(member.renewDate)}</td>
+      </tr>
+      <tr>
+        <td><strong>Membership End:</strong></td>
+        <td>{formatDate(member.membershipEndDate)}</td>
+      </tr>
+      <tr>
+        <td><strong>Status:</strong></td>
+        <td>
+          <span className="status" style={getStatusStyle(member.membershipStatus)}>
+            {member.membershipStatus?.toUpperCase() === "SUSPENDED" ? "Expired" : member.membershipStatus}
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Gender:</strong></td>
+        <td>{member.gender || "N/A"}</td>
+      </tr>
+      <tr>
+        <td><strong>Date of Birth:</strong></td>
+        <td>{formatDate(member.dob)}</td>
+      </tr>
+      <tr>
+        <td><strong>Height:</strong></td>
+        <td>{member.height || "N/A"} cm</td>
+      </tr>
+      <tr>
+        <td><strong>Weight:</strong></td>
+        <td>{member.weight || "N/A"} KG</td>
+      </tr>
+      {bmi && (
+        <tr>
+          <td><strong>BMI:</strong></td>
+          <td>
+            {bmi}
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
           )}
         </div>
       </DialogContent>

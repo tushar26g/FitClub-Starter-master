@@ -20,7 +20,7 @@ const configURL = {
   getMembersByOwnerURL: `${baseURL}/members/by-owner`,
   deleteMemberURL: `${baseURL}/members/delete`,
   updateMembershipStatusURL: `${baseURL}/members/update-status`,
-  updateMemberURL: `${baseURL}/members`,
+  updateMemberURL: `${baseURL}/members/update`,
 
   // Attendance URLs
   markAttendanceURL: `${baseURL}/attendance/mark`,

@@ -51,7 +51,8 @@ const updateMember = async (data) => {
   const token = localStorage.getItem('token');
   return await axios.put(updateMemberURL, data, {
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data'
     }
   });
 };

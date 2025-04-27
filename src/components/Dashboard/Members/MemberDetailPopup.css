@@ -12,15 +12,35 @@ background-image: linear-gradient(0deg, #FFDEE9 0%, #B5FFFC 100%);
   text-align: left;
 }
 
-.member-details p {
-  margin: 0.4rem 0;
-  font-size: 1rem;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 0.4rem;
-}
 .popup-content {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
   
+  .member-details table td {
+    padding: 6px 10px;
+    vertical-align: top;
+  }
+
+  .member-details-table {
+    width: 100%;
+    margin-top: 1rem;
+    border-collapse: collapse;
+    table-layout: auto;
+  }
+  
+  .member-details-table tr {
+    border-bottom: 1px solid var(--appColor);
+  }
+
+  .member-details td {
+    padding: 8px;
+    vertical-align: top;
+  }
+  
+  .member-details td:first-child {
+    white-space: nowrap; /* keeps label inline */
+    font-weight: 500;
+    width: 1%;
+  }
