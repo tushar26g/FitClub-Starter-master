@@ -18,6 +18,8 @@ import './calendarStyles.css'; // you'll create this for custom date styling
 import { Dialog, DialogTitle, DialogContent, IconButton, Tooltip, MenuItem, Select, Box  } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteConfirmationPopup from "../Table/DeleteConfirmationPopup";
+import { formatExcelDateTime } from "../../../Utils/utils";
 import { lightBlue, red } from '@mui/material/colors';
 
 export default function StaffTable() {
@@ -29,6 +31,8 @@ const [attendanceData, setAttendanceData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
 
   const handleViewAttendance = async (staffId) => {
     try {
@@ -92,18 +96,24 @@ const [attendanceData, setAttendanceData] = useState([]);
     fetchStaffs();
   }, [searchTerm]);
 
-  const handleDelete = async (id) => {
-    try {
-      const response = await staffService.deleteStaff(id);
-      if (response.data.success) {
-        setSnackbarMessage("Staff deleted successfully");
-        setSnackbarOpen(true);
-        fetchStaffs(); // Refresh after deletion
-      }
-    } catch (error) {
-      console.error("Delete failed:", error);
-    }
+  const handleDeleteClick = (enquiry) => {
+    setSelectedItem(enquiry);
+    setDeleteDialogOpen(true);
   };
+
+  const handleDeleteConfirm = async () => {
+      try {
+        await staffService.deleteStaff(selectedItem.id);
+        setDeleteDialogOpen(false);
+        setSnackbarMessage(`${selectedItem.name} deleted successfully!`);
+        setSnackbarOpen(true);
+        fetchStaffs(); // No need to reset searchTerm
+      } catch (error) {
+        console.error('Deletion failed', error);
+        setSnackbarMessage('Something went wrong. Please try again.');
+        setSnackbarOpen(true);
+      }
+    };
 
   const formatDateTime = (timestamp) => {
     if (!timestamp) return "-";
@@ -120,7 +130,10 @@ const [attendanceData, setAttendanceData] = useState([]);
       Name: e.name,
       "Mobile Number": e.mobileNumber,
       Email: e.email,
-      "Created At": formatDateTime(e.createdAt),
+      "Join Date": formatExcelDateTime(e.createdAt),
+      "Status": e.status,
+      "Gender": e.gender,
+      "Date of Birth": formatExcelDateTime(e.dob),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(sheetData);
@@ -236,11 +249,11 @@ const [attendanceData, setAttendanceData] = useState([]);
   </Tooltip>
 </TableCell>
 
-                  <TableCell>
-                    <DeleteIcon
-                      onClick={() => handleDelete(staff.id)}
-                      style={{ color: "var(--orange)", cursor: "pointer" }}
-                    />
+<TableCell align="left" onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteClick(staff);
+                  }}>
+                    <DeleteIcon sx={{ color: "var(--orange)", cursor: "pointer" }} />
                   </TableCell>
                 </TableRow>
               );
@@ -342,7 +355,17 @@ const [attendanceData, setAttendanceData] = useState([]);
     />
   </DialogContent>
 </Dialog>
-
+{selectedItem && (
+  <DeleteConfirmationPopup
+    open={deleteDialogOpen}
+    onClose={() => setDeleteDialogOpen(false)}
+    onConfirm={handleDeleteConfirm}
+    title="Confirm Deletion"
+    description={`Do you want to delete ${selectedItem.name}?`}
+    name={`${selectedItem.name}`}
+    photo={selectedItem.profilePhoto ? `data:image/jpeg;base64,${selectedItem.profilePhoto}` : '/default-profile.png'}
+  />
+)}
     </div>
   );
 }

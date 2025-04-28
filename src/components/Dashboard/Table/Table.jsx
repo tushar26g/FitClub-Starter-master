@@ -10,8 +10,10 @@ import {
   Avatar,
   TextField,
   Button,
-  IconButton
+  IconButton,
+  Snackbar
 } from "@mui/material";
+import MuiAlert from '@mui/material/Alert';
 import { useSnackbar } from 'notistack';
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -40,8 +42,10 @@ export default function BasicTable() {
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
-  const [selectedMember, setSelectedMember] = useState(null); // Selected member for deletion
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+const [selectedItem, setSelectedItem] = useState(null);
+const [snackbarOpen, setSnackbarOpen] = useState(false);
+const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const fetchMembers = async () => {
     try {
@@ -56,25 +60,24 @@ export default function BasicTable() {
   };
 
   const handleDeleteClick = (member) => {
-    setSelectedMember(member);
-    setDeleteDialogOpen(true); // Open the delete confirmation popup
+    setSelectedItem(member);
+    setDeleteDialogOpen(true);
   };
+  
 
-  const handleDeleteConfirm = async (memberId) => {
+  const handleDeleteConfirm = async () => {
     try {
-      const response = await memberService.deleteMember(memberId);
-      if (response.data.success) {
-        enqueueSnackbar(response.data.message, { variant: "success" });
-        setDeleteDialogOpen(false); // Close the popup
-        fetchMembers(); // Refresh the member list
-      } else {
-        enqueueSnackbar(response.data.message, { variant: "error" });
-      }
+      await memberService.deleteMember(selectedItem.id); 
+      setDeleteDialogOpen(false);
+      setSnackbarMessage(`${selectedItem.name} deleted successfully!`);
+      setSnackbarOpen(true);
+      fetchMembers(); // Refresh the table after deletion
     } catch (error) {
-      console.error("Delete failed:", error);
-      enqueueSnackbar("Delete failed. Please try again later.", { variant: "error" });
+      console.error('Deletion failed', error);
+      setSnackbarMessage('Something went wrong. Please try again.');
+      setSnackbarOpen(true);
     }
-  };
+  };  
 
   useEffect(() => {
     fetchMembers();
@@ -201,15 +204,34 @@ export default function BasicTable() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Snackbar
+  open={snackbarOpen}
+  autoHideDuration={3000}
+  onClose={() => setSnackbarOpen(false)}
+  anchorOrigin={{ vertical: "top", horizontal: "center" }}
+>
+  <MuiAlert
+    onClose={() => setSnackbarOpen(false)}
+    severity="success"
+    sx={{ width: "100%" }}
+  >
+    {snackbarMessage}
+  </MuiAlert>
+</Snackbar>
+
       {/* Delete Confirmation Popup */}
-      {selectedMember && (
-        <DeleteConfirmationPopup
-          open={deleteDialogOpen}
-          member={selectedMember}
-          onClose={() => setDeleteDialogOpen(false)}
-          onConfirm={handleDeleteConfirm}
-        />
-      )}
+      {selectedItem && (
+  <DeleteConfirmationPopup
+    open={deleteDialogOpen}
+    onClose={() => setDeleteDialogOpen(false)}
+    onConfirm={handleDeleteConfirm}
+    title="Confirm Deletion"
+    description={`Do you want to delete ${selectedItem.name}?`}
+    name={`${selectedItem.name}`}
+    photo={selectedItem.profilePhoto ? `data:image/jpeg;base64,${selectedItem.profilePhoto}` : '/default-profile.png'}
+  />
+)}
+
     </div>
   );
 }
