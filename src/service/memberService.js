@@ -3,10 +3,11 @@ import configURL from '../config/configURL';
 
 const {
   addMemberURL,
-  getMembersByOwnerURL, // ✅ Fixed name
+  getMembersByOwnerURL,
   deleteMemberURL,
   updateMembershipStatusURL,
-  updateMemberURL
+  updateMemberURL,
+  importMembersURL
 } = configURL;
 
 const addMember = async (formData) => {
@@ -18,7 +19,6 @@ const addMember = async (formData) => {
     }
   });
 };
-
 
 const getMembers = async () => {
   const token = localStorage.getItem('token');
@@ -37,7 +37,7 @@ const deleteMember = async (memberId) => {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      data: { memberId }, // Important: Send memberId in the body (for DELETE)
+      data: { memberId },
     });
     return response;
   } catch (error) {
@@ -65,10 +65,21 @@ const updateMember = async (data) => {
   });
 };
 
+const importMembers = async (jsonData) => {
+  const token = localStorage.getItem('token');
+  return await axios.post(importMembersURL, jsonData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+};
+
 export default {
   addMember,
   getMembers,
   deleteMember,
   updateStatus,
-  updateMember
+  updateMember,
+  importMembers
 };

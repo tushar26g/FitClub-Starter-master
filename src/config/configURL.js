@@ -21,6 +21,7 @@ const configURL = {
   deleteMemberURL: `${baseURL}/members/delete`,
   updateMembershipStatusURL: `${baseURL}/members/update-status`,
   updateMemberURL: `${baseURL}/members/update`,
+  importMembersURL: `${baseURL}/members/import-members`,
 
   // Attendance URLs
   markAttendanceURL: `${baseURL}/attendance/mark`,
