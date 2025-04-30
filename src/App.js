@@ -9,6 +9,7 @@ import EnquiryTable from './components/Dashboard/Enquiry/EnquiryTable';
 import AddStaffForm from './components/Dashboard/Staff/AddStaffForm';
 import StaffTable from './components/Dashboard/Staff/StaffTable';
 import MemberDetailsPage from './components/Dashboard/Members/MemberDetailsPage';
+import ImportMembersPage from './components/Dashboard/Excel/ImportMembersPage';
 
 function App() {
   const isAuthenticated = () => {
@@ -31,6 +32,7 @@ function App() {
             <Route path="view-enquiry" element={<EnquiryTable />} />
             <Route path="view-staff" element={<StaffTable />} />
             <Route path="member-details/:id" element={<MemberDetailsPage />} />
+            <Route path="import-members" element={<ImportMembersPage />} />
           </Route>
         </Routes>
       </div>

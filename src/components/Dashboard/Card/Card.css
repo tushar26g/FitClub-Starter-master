@@ -12,7 +12,6 @@
   box-shadow: none !important;
 }
 
-/* radial bar */
 .radialBar {
   flex: 1 1;
   display: flex;
@@ -41,7 +40,6 @@
   font-weight: bold;
 }
 
-/* sideDetail*/
 .detail {
   flex: 1;
   display: flex;
@@ -58,7 +56,6 @@
   font-size: 12px;
 }
 
-/* ExpandedCard */
 .ExpandedCard {
   position: absolute;
   width: 60%;
