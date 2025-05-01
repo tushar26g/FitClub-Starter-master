@@ -1,5 +1,6 @@
 import axios from 'axios';
 import configURL from '../config/configURL';
+import api from "./api";
 
 const {
   addEnquiryURL,
@@ -7,9 +8,13 @@ const {
   deleteEnquiryURL
 } = configURL;
 
+const authService = {
+  login: (data) => api.post("/auth/login", data),
+  getProfile: () => api.get("/user/profile"), // will auto attach token
+};
 
 const addEnquiry = async (data) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   return await axios.post(addEnquiryURL, data, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -20,7 +25,7 @@ const addEnquiry = async (data) => {
 
 // enquiryService.js
 const getEnquiries = async (search = "", interestLevel = "") => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
 
   const params = new URLSearchParams();
   if (search) params.append("search", search);
@@ -35,7 +40,7 @@ const getEnquiries = async (search = "", interestLevel = "") => {
 };
 
 const deleteEnquiry = async (enquiryId) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   return await axios.delete(`${deleteEnquiryURL}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -48,5 +53,6 @@ const deleteEnquiry = async (enquiryId) => {
 export default {
   addEnquiry,
   getEnquiries,
-  deleteEnquiry
+  deleteEnquiry,
+  authService
 };

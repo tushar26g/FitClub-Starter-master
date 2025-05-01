@@ -10,21 +10,47 @@ import AddStaffForm from './components/Dashboard/Staff/AddStaffForm';
 import StaffTable from './components/Dashboard/Staff/StaffTable';
 import MemberDetailsPage from './components/Dashboard/Members/MemberDetailsPage';
 import ImportMembersPage from './components/Dashboard/Excel/ImportMembersPage';
+import AdminDashboardPage from './components/Admin/AdminDashboard';
+import { decodeToken, isTokenExpired, getUserRole } from './Utils/authHelper';
 
 function App() {
   const isAuthenticated = () => {
-    return localStorage.getItem('token') !== null;
+    const token = localStorage.getItem('accessToken');
+    return token != null && !isTokenExpired(token);
+  };
+
+  const getDefaultRedirect = () => {
+    if (isAuthenticated()) {
+      const role = getUserRole();
+      return role === 'ADMIN' ? '/admin-dashboard' : '/dashboard';
+    }
+    return null;
   };
 
   return (
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* Root Route: Redirect to dashboard/admin if logged in */}
           <Route
-            path="/dashboard"
-            element={isAuthenticated() ? <DashboardLayout /> : <Navigate to="/" />}
-          >
+            path="/"
+            element={
+              (() => {
+                const redirectPath = getDefaultRedirect();
+                const currentPath = window.location.pathname;
+                if (redirectPath && currentPath === '/') {
+                  return <Navigate to={redirectPath} />;
+                }
+                return <Home />;
+              })()
+            }
+          />
+
+          {/* Admin Dashboard */}
+          <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
+
+          {/* Owner Dashboard and nested routes */}
+          <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<MainDash />} />
             <Route path="add-member" element={<AddMem />} />
             <Route path="add-enquiry" element={<Enquiry />} />

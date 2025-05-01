@@ -1,5 +1,6 @@
 import axios from 'axios';
 import configURL from '../config/configURL';
+import api from "./api";
 
 const {
   addMemberURL,
@@ -10,8 +11,13 @@ const {
   importMembersURL
 } = configURL;
 
+const authService = {
+  login: (data) => api.post("/auth/login", data),
+  getProfile: () => api.get("/user/profile"), // will auto attach token
+};
+
 const addMember = async (formData) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   return await axios.post(addMemberURL, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -21,16 +27,25 @@ const addMember = async (formData) => {
 };
 
 const getMembers = async () => {
-  const token = localStorage.getItem('token');
-  return await axios.get(getMembersByOwnerURL, {
+  try {
+  const token = localStorage.getItem('accessToken');
+  const response = await axios.get(getMembersByOwnerURL, {
     headers: {
       Authorization: `Bearer ${token}`
     }
-  });
+  });  
+  return response;
+} catch (error) {
+  if (error.response && error.response.status === 403) {
+      console.warn("Unauthorized or expired token. Logging out.");
+      localStorage.clear();
+    } 
+throw error;
+}
 };
 
 const deleteMember = async (memberId) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   try {
     const response = await axios.delete(`${deleteMemberURL}`, {
       headers: {
@@ -47,7 +62,7 @@ const deleteMember = async (memberId) => {
 };
 
 const updateStatus = async (data) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   return await axios.post(updateMembershipStatusURL, data, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -56,7 +71,7 @@ const updateStatus = async (data) => {
 };
 
 const updateMember = async (data) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   return await axios.put(updateMemberURL, data, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -66,7 +81,7 @@ const updateMember = async (data) => {
 };
 
 const importMembers = async (jsonData) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   return await axios.post(importMembersURL, jsonData, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -81,5 +96,6 @@ export default {
   deleteMember,
   updateStatus,
   updateMember,
-  importMembers
+  importMembers,
+  authService
 };

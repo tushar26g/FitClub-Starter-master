@@ -1,5 +1,5 @@
 import axios from "axios";
-import configURL from "../Configurations/configURL";
+import configURL from "../config/configURL";
 
 const {
   loginOwnerAdminURL,

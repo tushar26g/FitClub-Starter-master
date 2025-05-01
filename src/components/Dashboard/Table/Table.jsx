@@ -55,7 +55,11 @@ const [snackbarMessage, setSnackbarMessage] = useState('');
         setFilteredMembers(response.data.data);
       }
     } catch (error) {
-      console.error("Error fetching members", error);
+      if (error.response && error.response.status === 403) {
+        console.warn("Unauthorized or expired token. Logging out.");
+              localStorage.clear();
+      navigate("/");
+      }
     }
   };
 

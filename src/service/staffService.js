@@ -1,5 +1,6 @@
 import axios from 'axios';
 import configURL from '../config/configURL';
+import api from "./api";
 
 const {
   addStaffURL,
@@ -9,15 +10,20 @@ const {
   getStaffByOwnerURL
 } = configURL;
 
+const authService = {
+  login: (data) => api.post("/auth/login", data),
+  getProfile: () => api.get("/user/profile"), // will auto attach token
+};
+
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   return {
     Authorization: `Bearer ${token}`
   };
 };
 
   const addStaff = async (formData) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
     return await axios.post(addStaffURL, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -27,7 +33,7 @@ const getAuthHeaders = () => {
   };
 
   const getStaffList = async (search = "", status = "BOTH") => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
   
     const params = new URLSearchParams();
     if (search) params.append("search", search);
@@ -43,7 +49,7 @@ const getAuthHeaders = () => {
   
 
 const deleteStaff = async (staffId) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   return await axios.delete(`${deleteStaffURL}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -69,5 +75,6 @@ export default {
   getStaffList,
   deleteStaff,
   updateStatus,
-  updateStaff
+  updateStaff,
+  authService
 };
