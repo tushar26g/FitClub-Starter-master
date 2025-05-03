@@ -15,11 +15,17 @@ import { decodeToken, isTokenExpired, getUserRole } from './Utils/authHelper';
 
 function App() {
   const isAuthenticated = () => {
+    // if(localStorage == null) {
+    //   return false;
+    // }
     const token = localStorage.getItem('accessToken');
     return token != null && !isTokenExpired(token);
   };
 
   const getDefaultRedirect = () => {
+    if (!localStorage.getItem("accessToken")) {
+      return null; // Prevent redirection if no token exists
+    }
     if (isAuthenticated()) {
       const role = getUserRole();
       return role === 'ADMIN' ? '/admin-dashboard' : '/dashboard';
@@ -38,7 +44,7 @@ function App() {
               (() => {
                 const redirectPath = getDefaultRedirect();
                 const currentPath = window.location.pathname;
-                if (localStorage!=null && redirectPath && currentPath === '/') {
+                if (redirectPath && currentPath === '/') {
                   return <Navigate to={redirectPath} />;
                 }
                 return <Home />;
