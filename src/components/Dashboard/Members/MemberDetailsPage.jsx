@@ -1,94 +1,121 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import {
+  TextField,
+  Button,
+  Box,
+  Radio,
+  FormControl,
+  FormLabel,
+  Avatar,
+} from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { TextField, Button, Box, Radio, FormControl, FormLabel, Avatar } from "@mui/material";
-import { useSnackbar } from 'notistack';
-import memberService from "../../../service/memberService"; // Assuming same service
+import { useSnackbar } from "notistack";
+import memberService from "../../../service/memberService";
+import staffService from "../../../service/staffService";
 
 function MemberDetailsPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { member } = location.state || {};
+  const { data, type } = location.state || {};
+  const [editData, setEditData] = useState(data || {});
 
-  const [editData, setEditData] = useState(member || {});
+  const isMember = type === "member";
 
-  if (!member) return <div>No member data available</div>;
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
+  if (!data || !type) return <div>No data available</div>;
 
   const handleInputChange = (field, value) => {
     setEditData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleUpdateProfile = async () => {
     try {
       const formData = new FormData();
-      formData.append('dto', new Blob([JSON.stringify(editData)], { type: 'application/json' }));
-      if (editData.profilePhoto) {
-        formData.append('profilePhoto', editData.profilePhoto);
+      formData.append("dto", new Blob([JSON.stringify(editData)], { type: "application/json" }));
+
+      if (editData.profilePhoto instanceof File) {
+        formData.append("profilePhoto", editData.profilePhoto);
       }
 
-      const response = await memberService.updateMember(formData);
+      const response = isMember
+        ? await memberService.updateMember(formData)
+        : await staffService.updateStaff(formData);
 
       if (response.success) {
         enqueueSnackbar(response.message || "Profile updated successfully", { variant: "success" });
-        navigate(-1); // Go back to previous page (members list)
+        navigate(-1);
       } else {
-        enqueueSnackbar(response.message || "Failed to update profile", { variant: "error" });
+        enqueueSnackbar(response.message || "Update failed", { variant: "error" });
       }
     } catch (error) {
       console.error("Update failed:", error);
-      enqueueSnackbar("Update failed. Please try again later.", { variant: "error" });
+      enqueueSnackbar("Something went wrong. Please try again.", { variant: "error" });
     }
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () =>
-        setEditData((prev) => ({
-          ...prev,
-          profilePhoto: reader.result.split(",")[1]
-        }));
-      reader.readAsDataURL(file);
+      setEditData((prev) => ({
+        ...prev,
+        profilePhoto: file,
+      }));
     }
   };
 
-
   return (
-    <div className="member-details" style={{ padding: "2rem", maxWidth: "600px", margin: "auto" }}>
-      <h2>Edit Member Details</h2>
-      <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
-  <Button variant="outlined" onClick={handleUpdateProfile} sx={{color: "var(--orange)", borderColor: "var(--orange)"}}>Update Profile</Button>
-              <Button
-                variant="contained"
-                sx={{ backgroundColor: "var(--orange)", color: "white", "&:hover": { backgroundColor: "#e07e0f" } }}
-                onClick={() => setEditMode(true)} // Reuse same form with renewMembershipDate added
-              >
-                Renew Membership
-              </Button>
-</Box>
-      <Avatar
+    <div className="member-details" style={{
+      padding: "2rem",
+      maxWidth: "1500px",
+      margin: "auto",
+      overflowY: "auto",
+      maxHeight: "90vh",
+    }}>
+      <h2>Edit {isMember ? "Member" : "Staff"} Details</h2>
+
+      <Box sx={{ textAlign: "center" }}>
+        <label htmlFor="profile-upload">
+          <Avatar
             src={
-              editData.profilePhoto
+              editData.profilePhoto && !(editData.profilePhoto instanceof File)
                 ? `data:image/jpeg;base64,${editData.profilePhoto}`
                 : "/default-profile.png"
             }
-            sx={{ width: 100, height: 100, margin: "0 auto" }}
+            sx={{ width: 100, height: 100, margin: "0 auto", cursor: "pointer" }}
           />
-          <Button variant="outlined" component="label" sx={{ mt: 1, color: "var(--orange)", borderColor: "var(--orange)" }}>
-                        Upload Photo
-                        <input hidden accept="image/*" type="file" onChange={handleFileChange} />
-                      </Button>
+        </label>
+        <input
+          hidden
+          accept="image/*"
+          type="file"
+          id="profile-upload"
+          onChange={handleFileChange}
+        />
+        <Button
+          variant="outlined"
+          component="label"
+          sx={{ mt: 1, color: "var(--orange)", borderColor: "var(--orange)" }}
+          htmlFor="profile-upload"
+        >
+          Upload Photo
+        </Button>
+      </Box>
+
       <TextField
         fullWidth
         margin="normal"
         label="Name"
         value={editData.name || ""}
         onChange={(e) => handleInputChange("name", e.target.value)}
+        InputProps={{ style: { backgroundColor: "white", height: "3rem"  } }}
       />
       <TextField
         fullWidth
@@ -96,6 +123,7 @@ function MemberDetailsPage() {
         label="Mobile Number"
         value={editData.mobileNumber || ""}
         onChange={(e) => handleInputChange("mobileNumber", e.target.value)}
+        InputProps={{ style: { backgroundColor: "white", height: "3rem"  } }}
       />
       <TextField
         fullWidth
@@ -103,10 +131,13 @@ function MemberDetailsPage() {
         label="Email"
         value={editData.email || ""}
         onChange={(e) => handleInputChange("email", e.target.value)}
+        InputProps={{ style: { backgroundColor: "white", height: "3rem"  } }}
       />
-      
+
       <FormControl component="fieldset" sx={{ mt: 2 }}>
-        <FormLabel component="legend" sx={{ mb: 1 }}>Gender</FormLabel>
+        <FormLabel component="legend" sx={{ mb: 1 }}>
+          Gender
+        </FormLabel>
         <Box sx={{ display: "flex", gap: 4 }}>
           {["MALE", "FEMALE", "OTHER"].map((g) => (
             <label key={g} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -129,32 +160,39 @@ function MemberDetailsPage() {
         InputLabelProps={{ shrink: true }}
         value={editData.dob || ""}
         onChange={(e) => handleInputChange("dob", e.target.value)}
-      />
-      <TextField
-        fullWidth
-        margin="normal"
-        label="Height (in cm)"
-        value={editData.height || ""}
-        onChange={(e) => handleInputChange("height", e.target.value)}
-      />
-      <TextField
-        fullWidth
-        margin="normal"
-        label="Weight (in kg)"
-        value={editData.weight || ""}
-        onChange={(e) => handleInputChange("weight", e.target.value)}
+        InputProps={{ style: { backgroundColor: "white", height: "3rem"  } }}
       />
 
-<Box sx={{ display: "flex", gap: 2, mt: 4 }}>
-  <Button variant="outlined" onClick={handleUpdateProfile} sx={{color: "var(--orange)", borderColor: "var(--orange)"}}>Update Profile</Button>
-              <Button
-                variant="contained"
-                sx={{ backgroundColor: "var(--orange)", color: "white", "&:hover": { backgroundColor: "#e07e0f" } }}
-                onClick={() => setEditMode(true)} // Reuse same form with renewMembershipDate added
-              >
-                Renew Membership
-              </Button>
-</Box>
+      {isMember && (
+        <>
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Height (in cm)"
+            value={editData.height || ""}
+            onChange={(e) => handleInputChange("height", e.target.value)}
+            InputProps={{ style: { backgroundColor: "white", height: "3rem"  } }}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Weight (in kg)"
+            value={editData.weight || ""}
+            onChange={(e) => handleInputChange("weight", e.target.value)}
+            InputProps={{ style: { backgroundColor: "white", height: "3rem" } }}
+          />
+        </>
+      )}
+
+      <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
+        <Button
+          variant="outlined"
+          onClick={handleUpdateProfile}
+          sx={{ color: "var(--orange)", borderColor: "var(--orange)" }}
+        >
+          Update Profile
+        </Button>
+      </Box>
     </div>
   );
 }

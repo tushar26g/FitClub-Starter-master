@@ -185,10 +185,10 @@ const [attendanceData, setAttendanceData] = useState([]);
             <TableRow>
               <TableCell>Avatar</TableCell>
               <TableCell>Name</TableCell>
-              <TableCell>Mobile</TableCell>
-              <TableCell>Mark Attendance</TableCell>
-              <TableCell>View Attendance</TableCell> 
-              <TableCell>Delete</TableCell>
+              <TableCell align='center'>Mobile</TableCell>
+              <TableCell align='center'>Mark Attendance</TableCell>
+              <TableCell align='center'>View Attendance</TableCell> 
+              <TableCell align='center'>Delete</TableCell>
             </TableRow>
           </TableHead>
 
@@ -219,9 +219,9 @@ const [attendanceData, setAttendanceData] = useState([]);
                                       />
                     {/* <Avatar sx={{ width: 40, height: 40 }}>{initials}</Avatar> */}
                   </TableCell>
-                  <TableCell>{staff.name}</TableCell>
-                  <TableCell>{staff.mobileNumber}</TableCell>
-                  <TableCell>
+                  <TableCell >{staff.name}</TableCell>
+                  <TableCell align='center'>{staff.mobileNumber}</TableCell>
+                  <TableCell align='center'>
     <select
       value={attendanceStatus[staff.id] || ""}
       onChange={(e) => handleAttendanceChange(staff.id, e.target.value)}
@@ -241,15 +241,15 @@ const [attendanceData, setAttendanceData] = useState([]);
       Mark
     </Button>
   </TableCell>
-  <TableCell>
+  <TableCell onClick={() => handleViewAttendance(staff.id)} align="center">
   <Tooltip title="View Attendance">
-    <IconButton onClick={() => handleViewAttendance(staff.id)} style={{ color: "var(--orange)" }}>
+    <IconButton style={{ color: "var(--orange)" }}>
       <VisibilityIcon />
     </IconButton>
   </Tooltip>
 </TableCell>
 
-<TableCell align="left" onClick={(e) => {
+<TableCell align="center" onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteClick(staff);
                   }}>

@@ -66,8 +66,7 @@ const [snackbarMessage, setSnackbarMessage] = useState('');
   const handleDeleteClick = (member) => {
     setSelectedItem(member);
     setDeleteDialogOpen(true);
-  };
-  
+  };  
 
   const handleDeleteConfirm = async () => {
     try {
@@ -183,16 +182,16 @@ const [snackbarMessage, setSnackbarMessage] = useState('');
                     sx={{ width: 40, height: 40 }}
                   />
                 </TableCell>
-                <TableCell align="left" onClick={() => navigate(`/dashboard/member-details/${member.id}`, { state: { member } })}>
+                <TableCell align="left" onClick={() => navigate(`/dashboard/member-details`, { state: { data: member, type: "member" } })}>
                   {member.name}
                 </TableCell>
-                <TableCell align="left" onClick={() => navigate(`/dashboard/member-details/${member.id}`, { state: { member } })}>
+                <TableCell align="left" onClick={() => navigate(`/dashboard/member-details`, { state: { data: member, type: "member" } })}>
                   {member.mobileNumber}
                 </TableCell>
-                <TableCell align="left" onClick={() => navigate(`/dashboard/member-details/${member.id}`, { state: { member } })}>
+                <TableCell align="left" onClick={() => navigate(`/dashboard/member-details`, { state: { data: member, type: "member" } })}>
                   {member.membershipEndDate}
                 </TableCell>
-                <TableCell align="left" onClick={() => navigate(`/dashboard/member-details/${member.id}`, { state: { member } })}>
+                <TableCell align="left" onClick={() => navigate(`/dashboard/member-details`, { state: { data: member, type: "member" } })}>
                   <span className="status" style={getStatusStyle(member.membershipStatus)}>
                     {member.membershipStatus?.toUpperCase() === "SUSPENDED" ? "Expired" : member.membershipStatus}
                   </span>

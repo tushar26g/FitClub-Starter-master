@@ -1,12 +1,13 @@
 /* AddMember.css */
   .add-member-container {
     /* background: var(--glass); */
-    padding: 2rem;
+    padding: 1rem;
     margin: 1rem;
     /* border-radius: var(--border-radius); */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     animation: fadeInUp 0.5s ease-out;
     overflow-y: auto;
+    max-height: 90vh;
     /* height: calc(95vh - 2rem);  */
   }
   

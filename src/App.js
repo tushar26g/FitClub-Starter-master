@@ -57,7 +57,7 @@ function App() {
             <Route path="add-staff" element={<AddStaffForm />} />
             <Route path="view-enquiry" element={<EnquiryTable />} />
             <Route path="view-staff" element={<StaffTable />} />
-            <Route path="member-details/:id" element={<MemberDetailsPage />} />
+            <Route path="member-details" element={<MemberDetailsPage />} />
             <Route path="import-members" element={<ImportMembersPage />} />
           </Route>
         </Routes>
