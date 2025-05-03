@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef  } from "react";
 import {
   TextField,
   Button,
@@ -17,16 +17,27 @@ function MemberDetailsPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-
+  const mobileNumberRef = useRef();
   const { data, type } = location.state || {};
   const [editData, setEditData] = useState(data || {});
-
   const isMember = type === "member";
+const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (message || error) {
+      const timer = setTimeout(() => {
+        setMessage("");
+        setError("");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message, error]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  
+
   if (!data || !type) return <div>No data available</div>;
 
   const handleInputChange = (field, value) => {
@@ -37,29 +48,70 @@ function MemberDetailsPage() {
   };
 
   const handleUpdateProfile = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("dto", new Blob([JSON.stringify(editData)], { type: "application/json" }));
-
-      if (editData.profilePhoto instanceof File) {
-        formData.append("profilePhoto", editData.profilePhoto);
+    // Check if mobile number is 10 digits
+    if (editData.mobileNumber && editData.mobileNumber.length !== 10) {
+      setError("Please enter a valid 10-digit mobile number.");
+      enqueueSnackbar("Please enter a valid 10-digit mobile number.", {
+        variant: "error",
+        anchorOrigin: { vertical: "top", horizontal: "center" },
+      });
+      if (mobileNumberRef.current) {
+        mobileNumberRef.current.focus();
       }
-
+      return;
+    }
+    
+  
+    try {
+      const submissionData = new FormData();
+      const dto = { ...editData };
+      delete dto.profilePhoto;
+  
+      if (isMember) dto.memberId = dto.id;
+      else dto.staffId = dto.id;
+  
+      submissionData.append("dto", new Blob([JSON.stringify(dto)], { type: "application/json" }));
+  
+      if (editData.profilePhoto instanceof File) {
+        submissionData.append("profilePhoto", editData.profilePhoto);
+      }
+  
       const response = isMember
-        ? await memberService.updateMember(formData)
-        : await staffService.updateStaff(formData);
-
-      if (response.success) {
-        enqueueSnackbar(response.message || "Profile updated successfully", { variant: "success" });
-        navigate(-1);
+        ? await memberService.updateMember(submissionData)
+        : await staffService.updateStaff(submissionData);
+  
+      if (response.data.success) {
+        setMessage(response.data.message || "Staff added successfully!");
+        setError("");
+        enqueueSnackbar(response.data.message || "Profile updated successfully", {
+          variant: "success",
+          anchorOrigin: { vertical: "top", horizontal: "center" },
+          autoHideDuration: 3000,
+        });
+        setTimeout(() => {
+          navigate(-1);
+        }, 1000); // Go back
       } else {
-        enqueueSnackbar(response.message || "Update failed", { variant: "error" });
+        setError(response?.data?.message || "Failed to add staff.");
+        setMessage("");
+        enqueueSnackbar(response.data.message || "Update failed", {
+          variant: "error",
+          anchorOrigin: { vertical: "top", horizontal: "center" },
+        });
       }
     } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Failed to add member. Try again.");
+      }
       console.error("Update failed:", error);
-      enqueueSnackbar("Something went wrong. Please try again.", { variant: "error" });
+      enqueueSnackbar("Something went wrong. Please try again.", {
+        variant: "error",
+        anchorOrigin: { vertical: "top", horizontal: "center" },
+      });
     }
-  };
+  };  
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -79,6 +131,9 @@ function MemberDetailsPage() {
       overflowY: "auto",
       maxHeight: "90vh",
     }}>
+{message && <div className="toast toast-success">{message}</div>}
+{error && <div className="toast toast-error">{error}</div>}
+
       <h2>Edit {isMember ? "Member" : "Staff"} Details</h2>
 
       <Box sx={{ textAlign: "center" }}>
@@ -115,7 +170,7 @@ function MemberDetailsPage() {
         label="Name"
         value={editData.name || ""}
         onChange={(e) => handleInputChange("name", e.target.value)}
-        InputProps={{ style: { backgroundColor: "white", height: "3rem"  } }}
+        InputProps={{ style: { backgroundColor: "white", height: "3rem" } }}
       />
       <TextField
         fullWidth
@@ -123,15 +178,18 @@ function MemberDetailsPage() {
         label="Mobile Number"
         value={editData.mobileNumber || ""}
         onChange={(e) => handleInputChange("mobileNumber", e.target.value)}
-        InputProps={{ style: { backgroundColor: "white", height: "3rem"  } }}
+        inputRef={mobileNumberRef}  // Reference to mobile number input
+        InputProps={{ style: { backgroundColor: "white", height: "3rem" } }}
+        inputProps={{ maxLength: 10 }}
       />
+
       <TextField
         fullWidth
         margin="normal"
         label="Email"
         value={editData.email || ""}
         onChange={(e) => handleInputChange("email", e.target.value)}
-        InputProps={{ style: { backgroundColor: "white", height: "3rem"  } }}
+        InputProps={{ style: { backgroundColor: "white", height: "3rem" } }}
       />
 
       <FormControl component="fieldset" sx={{ mt: 2 }}>
@@ -160,7 +218,7 @@ function MemberDetailsPage() {
         InputLabelProps={{ shrink: true }}
         value={editData.dob || ""}
         onChange={(e) => handleInputChange("dob", e.target.value)}
-        InputProps={{ style: { backgroundColor: "white", height: "3rem"  } }}
+        InputProps={{ style: { backgroundColor: "white", height: "3rem" } }}
       />
 
       {isMember && (
@@ -171,7 +229,7 @@ function MemberDetailsPage() {
             label="Height (in cm)"
             value={editData.height || ""}
             onChange={(e) => handleInputChange("height", e.target.value)}
-            InputProps={{ style: { backgroundColor: "white", height: "3rem"  } }}
+            InputProps={{ style: { backgroundColor: "white", height: "3rem" } }}
           />
           <TextField
             fullWidth
@@ -186,9 +244,13 @@ function MemberDetailsPage() {
 
       <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
         <Button
-          variant="outlined"
+          variant="contained"
           onClick={handleUpdateProfile}
-          sx={{ color: "var(--orange)", borderColor: "var(--orange)" }}
+          sx={{
+            backgroundColor: "var(--orange)",
+            color: "white",
+            "&:hover": { backgroundColor: "#e07e0f" },
+          }}
         >
           Update Profile
         </Button>

@@ -21,6 +21,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteConfirmationPopup from "../Table/DeleteConfirmationPopup";
 import { formatExcelDateTime } from "../../../Utils/utils";
 import { lightBlue, red } from '@mui/material/colors';
+import { useNavigate } from "react-router-dom";
 
 export default function StaffTable() {
     const [attendanceDialogOpen, setAttendanceDialogOpen] = useState(false);
@@ -33,6 +34,7 @@ const [attendanceData, setAttendanceData] = useState([]);
   const [snackbarMessage, setSnackbarMessage] = useState("");
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+    const navigate = useNavigate();
 
   const handleViewAttendance = async (staffId) => {
     try {
@@ -207,7 +209,7 @@ const [attendanceData, setAttendanceData] = useState([]);
                     transition: "background-color 0.3s ease",
                   }}
                 >
-                  <TableCell>
+                  <TableCell onClick={() => navigate(`/dashboard/member-details`, { state: { data: staff, type: "staff" } })}>
                     <Avatar
                                         alt={staff.name}
                                         src={
@@ -219,8 +221,8 @@ const [attendanceData, setAttendanceData] = useState([]);
                                       />
                     {/* <Avatar sx={{ width: 40, height: 40 }}>{initials}</Avatar> */}
                   </TableCell>
-                  <TableCell >{staff.name}</TableCell>
-                  <TableCell align='center'>{staff.mobileNumber}</TableCell>
+                  <TableCell onClick={() => navigate(`/dashboard/member-details`, { state: { data: staff, type: "staff" } })}>{staff.name}</TableCell>
+                  <TableCell align='center' onClick={() => navigate(`/dashboard/member-details`, { state: { data: staff, type: "staff" } })}>{staff.mobileNumber}</TableCell>
                   <TableCell align='center'>
     <select
       value={attendanceStatus[staff.id] || ""}

@@ -38,7 +38,7 @@ function App() {
               (() => {
                 const redirectPath = getDefaultRedirect();
                 const currentPath = window.location.pathname;
-                if (redirectPath && currentPath === '/') {
+                if (localStorage!=null && redirectPath && currentPath === '/') {
                   return <Navigate to={redirectPath} />;
                 }
                 return <Home />;

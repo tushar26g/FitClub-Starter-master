@@ -93,8 +93,6 @@ const AddMember = ({ onMemberAdded }) => {
     
   };
 
-  
-  
   const handlePackageChange = (e) => {
     const selectedPackage = e.target.value;
     const startDate = new Date(formData.joiningDate);

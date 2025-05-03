@@ -171,7 +171,7 @@ const [snackbarMessage, setSnackbarMessage] = useState('');
                   transition: "background-color 0.3s ease"
                 }}
               >
-                <TableCell>
+                <TableCell onClick={() => navigate(`/dashboard/member-details`, { state: { data: member, type: "member" } })}>
                   <Avatar
                     alt={member.name}
                     src={
