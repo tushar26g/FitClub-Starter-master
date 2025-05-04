@@ -13,6 +13,7 @@ import {
   IconButton,
   Snackbar
 } from "@mui/material";
+import CreditCardIcon from '@mui/icons-material/Update';
 import MuiAlert from '@mui/material/Alert';
 import { useSnackbar } from 'notistack';
 import SearchIcon from "@mui/icons-material/Search";
@@ -155,6 +156,7 @@ const [snackbarMessage, setSnackbarMessage] = useState('');
               <TableCell align="left">Mobile Number</TableCell>
               <TableCell align="left">Expire Date</TableCell>
               <TableCell align="left">Status</TableCell>
+              <TableCell align="left">Renew Member</TableCell>
               <TableCell align="left">Delete</TableCell>
             </TableRow>
           </TableHead>
@@ -195,6 +197,11 @@ const [snackbarMessage, setSnackbarMessage] = useState('');
                   <span className="status" style={getStatusStyle(member.membershipStatus)}>
                     {member.membershipStatus?.toUpperCase() === "SUSPENDED" ? "Expired" : member.membershipStatus}
                   </span>
+                </TableCell>
+                <TableCell align="left" onClick={() => navigate(`/dashboard/renew`, { state: { memberId: member.id, photo:member.profilePhoto, name: member.name } })}>
+                <IconButton>
+                  <CreditCardIcon />
+                </IconButton>
                 </TableCell>
                 <TableCell align="left" onClick={(e) => {
                   e.stopPropagation(); // Prevent row navigation on delete icon click

@@ -8,7 +8,8 @@ const {
   deleteMemberURL,
   updateMembershipStatusURL,
   updateMemberURL,
-  importMembersURL
+  importMembersURL,
+  analysisMemberURL
 } = configURL;
 
 const authService = {
@@ -37,7 +38,7 @@ const getMembers = async () => {
   return response;
 } catch (error) {
   if (error.response && error.response.status === 403) {
-      console.warn("Unauthorized or expired token. Logging out.");
+      console.log("Unauthorized or expired token. Logging out.");
       localStorage.clear();
     } 
 throw error;
@@ -90,6 +91,24 @@ const importMembers = async (jsonData) => {
   });
 };
 
+const analysisMembers = async () => {
+  try {
+  const token = localStorage.getItem('accessToken');
+  const response = await axios.get(analysisMemberURL, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });  
+  return response;
+} catch (error) {
+  if (error.response && error.response.status === 403) {
+      console.warn("Unauthorized or expired token. Logging out.");
+      localStorage.clear();
+    } 
+throw error;
+}
+};
+
 export default {
   addMember,
   getMembers,
@@ -97,5 +116,5 @@ export default {
   updateStatus,
   updateMember,
   importMembers,
-  authService
+  analysisMembers,
 };

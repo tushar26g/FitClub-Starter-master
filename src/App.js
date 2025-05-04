@@ -12,6 +12,7 @@ import MemberDetailsPage from './components/Dashboard/Members/MemberDetailsPage'
 import ImportMembersPage from './components/Dashboard/Excel/ImportMembersPage';
 import AdminDashboardPage from './components/Admin/AdminDashboard';
 import { decodeToken, isTokenExpired, getUserRole } from './Utils/authHelper';
+import RenewMembershipPage from './components/Dashboard/Members/RenewMembershipPage';
 
 function App() {
   const isAuthenticated = () => {
@@ -65,6 +66,7 @@ function App() {
             <Route path="view-staff" element={<StaffTable />} />
             <Route path="member-details" element={<MemberDetailsPage />} />
             <Route path="import-members" element={<ImportMembersPage />} />
+            <Route path="renew" element={<RenewMembershipPage />} />
           </Route>
         </Routes>
       </div>

@@ -21,7 +21,7 @@ function MemberDetailsPage() {
   const { data, type } = location.state || {};
   const [editData, setEditData] = useState(data || {});
   const isMember = type === "member";
-const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -173,15 +173,21 @@ const [message, setMessage] = useState("");
         InputProps={{ style: { backgroundColor: "white", height: "3rem" } }}
       />
       <TextField
-        fullWidth
-        margin="normal"
-        label="Mobile Number"
-        value={editData.mobileNumber || ""}
-        onChange={(e) => handleInputChange("mobileNumber", e.target.value)}
-        inputRef={mobileNumberRef}  // Reference to mobile number input
-        InputProps={{ style: { backgroundColor: "white", height: "3rem" } }}
-        inputProps={{ maxLength: 10 }}
-      />
+  fullWidth
+  margin="normal"
+  label="Mobile Number"
+  value={editData.mobileNumber || ""}
+  onChange={(e) => handleInputChange("mobileNumber", e.target.value)}
+  inputRef={mobileNumberRef}
+  error={Boolean(error && error.toLowerCase().includes("mobile"))} // ✅ Only show red border if it's a mobile error
+  helperText={
+    error && error.toLowerCase().includes("mobile")
+      ? "Mobile number must be exactly 10 digits"
+      : ""
+  }
+  InputProps={{ style: { backgroundColor: "white", height: "3rem" } }}
+  inputProps={{ maxLength: 10 }}
+/>
 
       <TextField
         fullWidth
