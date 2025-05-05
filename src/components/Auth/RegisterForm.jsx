@@ -1,63 +1,218 @@
-import React, { useState } from 'react';
-import authService from '../../service/authService'; // make sure path is correct
+import React, { useState } from "react";
+import {
+  TextField,
+  Button,
+  MenuItem,
+  Avatar,
+  Box,
+} from "@mui/material";
+import { useSnackbar } from "notistack";
+import gymOwnerService from "../../service/authService";
 import { useNavigate } from 'react-router-dom';
-import './AuthModal.css';
 
-const RegisterForm = ({ onSwitch }) => {
+function GymOwnerRegistrationForm() {
+  const { enqueueSnackbar } = useSnackbar();
+    const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    full_name: '',
-    email: '',
-    password: '',
-    mobile_number: '',
-    gym_name: '',
-    address: '',
-    selected_plan: '',
-    profile_picture: null,
+    fullName: "",
+    mobileNumber: "",
+    email: "",
+    password: "",
+    businessName: "",
+    address: "",
+    AccountStatus: "TRIAL",
+    profilePhoto: null,
   });
 
-  const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: files ? files[0] : value,
-    });
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: false }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const dataToSend = new FormData();
-      Object.keys(formData).forEach((key) => {
-        dataToSend.append(key, formData[key]);
+  const handleFileChange = (e) => {
+    setFormData((prev) => ({ ...prev, profilePhoto: e.target.files[0] }));
+  };
+
+  const validate = () => {
+    const newErrors = {
+      fullName: !formData.fullName.trim(),
+      mobile: !/^\d{10}$/.test(formData.mobile),
+      password: !formData.password.trim(),
+    };
+    setErrors(newErrors);
+    return !Object.values(newErrors).some(Boolean);
+  };
+
+  const handleSubmit = async () => {
+    if (!validate()) {
+      enqueueSnackbar("Please fix errors before submitting", {
+        variant: "warning",
+        anchorOrigin: { vertical: "top", horizontal: "center" },
       });
+      return;
+    }
 
-      const response = await authService.registerOwner(dataToSend);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('owner', JSON.stringify(response.owner));
+    try {
+      const dto = {
+        fullName: formData.fullName,
+        mobileNumber: formData.mobile,
+        email: formData.email || null,
+        password: formData.password,
+        businessName: formData.businessName || null,
+        address: formData.address || null,
+        AccountStatus: "TRIAL",
+      };
 
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Registration failed:', error.response?.data || error.message);
-      alert(error.response?.data?.message || 'Registration failed');
+      const submissionData = new FormData();
+      submissionData.append(
+        "dto",
+        new Blob([JSON.stringify(dto)], { type: "application/json" })
+      );
+      if (formData.profilePhoto) {
+        submissionData.append("profilePhoto", formData.profilePhoto);
+      }
+
+      const res = await gymOwnerService.registerOwner(submissionData);
+
+      const { accessToken, refreshToken, owner } = res;
+      if (res.success) {
+        enqueueSnackbar("Registration successful", {
+          variant: "success",
+          anchorOrigin: { vertical: "top", horizontal: "center" },
+        });
+        // ✅ Store tokens and user
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('owner', JSON.stringify(owner));
+        navigate('/dashboard');
+      } else {
+        enqueueSnackbar(res.data.message || "Registration failed", {
+          variant: "error",
+          anchorOrigin: { vertical: "top", horizontal: "center" },
+        });
+      }
+    } catch (err) {
+      enqueueSnackbar("Something went wrong", {
+        variant: "error",
+        anchorOrigin: { vertical: "top", horizontal: "center" },
+      });
+      console.error(err);
     }
   };
 
-  return (
-    <form className="form-container" onSubmit={handleSubmit}>
-      <h2>Register</h2>
-      <input type="text" name="full_name" placeholder="Full Name" onChange={handleChange} required />
-      <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
-      <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-      <input type="text" name="mobile_number" placeholder="Mobile Number" onChange={handleChange} required />
-      <input type="text" name="gym_name" placeholder="Gym Name" onChange={handleChange} required />
-      <input type="text" name="address" placeholder="Address" onChange={handleChange} required />
-      <input type="file" name="profile_picture" onChange={handleChange} />
-      <input type="text" name="selected_plan" placeholder="Selected Plan" onChange={handleChange} required />
-      <button className="btn-orange" type="submit">Register</button>
-    </form>
-  );
-};
+  const compactInputStyle = {
+    backgroundColor: "white",
+    width: "100%",
+    mt: 1,
+    "& .MuiInputBase-root": {
+      fontSize: "0.85rem",
+      height: 36,
+    },
+    "& .MuiInputBase-input": {
+      padding: "8px 10px",
+    },
+    "& .MuiFormHelperText-root": {
+      marginTop: "2px",
+    },
+  };
 
-export default RegisterForm;
+  return (
+    <div>
+      <h3 style={{ marginBottom: "1rem", alignContent: "center" }}>Register Gym Owner</h3>
+
+      <Box textAlign="center" my={1}>
+        <Avatar
+          src={
+            formData.profilePhoto
+              ? URL.createObjectURL(formData.profilePhoto)
+              : ""
+          }
+          sx={{ width: 64, height: 64, margin: "auto" }}
+        />
+        <Button variant="outlined" component="label" sx={{ mt: 1, fontSize: "0.75rem", padding: "4px 10px", color: "var(--orange)", borderColor: "var(--orange)" }}>
+          Upload Photo
+          <input type="file" hidden accept="image/*" onChange={handleFileChange} />
+        </Button>
+      </Box>
+
+      <TextField
+        label="Full Name*"
+        value={formData.fullName}
+        onChange={(e) => handleChange("fullName", e.target.value)}
+        error={errors.fullName}
+        helperText={errors.fullName ? "Full Name is required" : ""}
+        size="small"
+        sx={compactInputStyle}
+      />
+
+      <TextField
+        label="Mobile*"
+        value={formData.mobile}
+        onChange={(e) => handleChange("mobile", e.target.value)}
+        error={errors.mobile}
+        helperText={errors.mobile ? "Enter valid 10-digit mobile number" : ""}
+        size="small"
+        inputProps={{ maxLength: 10 }}
+        sx={compactInputStyle}
+      />
+
+      <TextField
+        label="Email"
+        value={formData.email}
+        onChange={(e) => handleChange("email", e.target.value)}
+        size="small"
+        sx={compactInputStyle}
+      />
+
+      <TextField
+        label="Password*"
+        type="password"
+        value={formData.password}
+        onChange={(e) => handleChange("password", e.target.value)}
+        error={errors.password}
+        helperText={errors.password ? "Password is required" : ""}
+        size="small"
+        sx={compactInputStyle}
+      />
+
+      <TextField
+        label="Club/Business Name"
+        value={formData.businessName}
+        onChange={(e) => handleChange("businessName", e.target.value)}
+        size="small"
+        sx={compactInputStyle}
+      />
+
+      <TextField
+        label="Address"
+        multiline
+        rows={2}
+        value={formData.address}
+        onChange={(e) => handleChange("address", e.target.value)}
+        size="small"
+        sx={{ ...compactInputStyle }}
+      />
+
+      <Box mt={2} textAlign="center">
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          sx={{
+            backgroundColor: "var(--orange)",
+            color: "white",
+            padding: "6px 16px",
+            fontSize: "0.85rem",
+            "&:hover": { backgroundColor: "#e07e0f" },
+          }}
+        >
+          Register
+        </Button>
+      </Box>
+    </div>
+  );
+}
+
+export default GymOwnerRegistrationForm;

@@ -13,9 +13,10 @@ const Testimonials = () => {
         <div key={index} className="testimonial-item">
           <div className="left-t">
             <span className="review">"{testimonial.review}"</span>
-            <span>
-              <span style={{ color: "var(--orange)" }}>{testimonial.name}</span> - {testimonial.status}
-            </span>
+            <div className="name-status">
+              <h3 style={{ color: "var(--orange)", margin: "0" }}>{testimonial.name}</h3>
+              <p style={{ margin: "0", paddingLeft: "5.5rem" }}>- {testimonial.status}</p>
+            </div>
           </div>
 
           <div className="right-t">

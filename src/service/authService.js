@@ -5,7 +5,9 @@ const { registerOwnerURL, loginOwnerAdminURL } = configURL;
 
 // ✅ Register a gym owner (no token required)
 const registerOwner = async (ownerData) => {
-  const response = await axios.post(registerOwnerURL, ownerData);
+  const response = await axios.post(registerOwnerURL, ownerData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return response.data; // Usually returns a message or registered user info
 };
 

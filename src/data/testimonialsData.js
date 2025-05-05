@@ -20,6 +20,6 @@ export const testimonialsData = [
     image : image3,
     review:'Hi, I’m Krishna Shinde, co-founder of Shinde Fitness Gym and a certified gym coach. With hands-on experience and a love for fitness, I’m here to make this platform the ultimate tool for gyms to thrive.',
     name: 'Krishna Shinde',
-    status: "Co-founder"
+    status: 'Co-founder & Marketing Manager'
   }
 ];
