@@ -60,7 +60,7 @@ const [snackbarMessage, setSnackbarMessage] = useState('');
         setTimeout(() =>
         {
           localStorage.clear();
-        },4000)
+        },5000)
         navigate("/");
         window.location.href = "/";
       }

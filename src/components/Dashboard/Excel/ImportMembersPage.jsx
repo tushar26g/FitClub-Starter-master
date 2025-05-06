@@ -1,20 +1,31 @@
 import React, { useState } from 'react';
+import * as XLSX from 'xlsx';
 import memberService from '../../../service/memberService';
-import { Button } from '../../ui/button';
-import { Card, CardContent } from '../../ui/card';
-import { Input } from '../../ui/input';
-import { Label } from '../../ui/label';
+import './popup.css'; // For modal
+import './import-members.css'; // New file for general styling
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ImportMembersPage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files[0];
-    setSelectedFile(file);
-    setSuccessMessage('');
+    if (!file) return;
+
+    try {
+      const data = await file.arrayBuffer();
+      XLSX.read(data, { type: 'buffer' });
+      setSelectedFile(file);
+      setShowPopup(false);
+      setSuccessMessage(''); 
+    } catch (err) {
+      console.warn('Password-protected or unreadable Excel file:', err);
+      setSelectedFile(null);
+      setShowPopup(true);
+    }
   };
 
   const handleSendEmail = async () => {
@@ -28,18 +39,24 @@ const ImportMembersPage = () => {
       toast.error('Gym owner not found.');
       return;
     }
-    const parsedOwner = JSON.parse(localStorage.getItem('owner'));
-const formData = new FormData();
 
-formData.append('excelFile', selectedFile);
-formData.append('ownerId', new Blob([JSON.stringify(parsedOwner.id)], { type: 'application/json' }));
-formData.append('name', new Blob([JSON.stringify(parsedOwner.fullName)], { type: 'application/json' }));
+    const parsedOwner = JSON.parse(owner);
+    const formData = new FormData();
+    formData.append('excelFile', selectedFile);
+    formData.append('ownerId', new Blob([JSON.stringify(parsedOwner.id)], { type: 'application/json' }));
+    formData.append('name', new Blob([JSON.stringify(parsedOwner.fullName)], { type: 'application/json' }));
+    formData.append('mobileNumber', new Blob([JSON.stringify(parsedOwner.mobileNumber)], { type: 'application/json' }));
 
     try {
-      const res = await memberService.importMembers(formData);
-      toast.success('Excel file sent successfully.');
-      setSuccessMessage('✅ Your Excel file was uploaded successfully. Your data will be reflected within 1 day.');
-      setSelectedFile(null);
+      const response = await memberService.importMembers(formData);
+      // toast.success('Excel file sent successfully.');
+      console.log('Response:', response.data);
+      if (response.data === "Email sent successfully."){
+        setSuccessMessage('✅ Excel uploaded successfully. Data will reflect within 1 day.');
+        setSelectedFile(null);
+      }else{
+        toast.error('Failed to send file. Please try again.');
+      }
     } catch (error) {
       console.error('Upload error:', error);
       toast.error('Failed to send file. Please try again.');
@@ -47,32 +64,46 @@ formData.append('name', new Blob([JSON.stringify(parsedOwner.fullName)], { type:
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-semibold mb-4">Send Members Excel File via Email</h1>
+    <div className="import-container">
+      <h1 className="page-title">Send Members Excel File</h1>
 
-      <Card className="bg-white shadow-lg rounded-2xl p-4">
-        <CardContent>
-          <div className="flex items-center gap-4 mb-4">
-            <Label htmlFor="excelUpload">Upload Excel File:</Label>
-            <Input
-              type="file"
-              id="excelUpload"
-              accept=".xlsx, .xls"
-              onChange={handleFileUpload}
-            />
-          </div>
+      <div className="card">
+        <div className="card-content">
+          <label htmlFor="excelUpload" className="input-label">Upload Excel File:</label>
+          <input
+            type="file"
+            id="excelUpload"
+            accept=".xlsx, .xls"
+            onChange={handleFileUpload}
+            className="file-input"
+          />
 
-          <Button className="mt-4 w-full" onClick={handleSendEmail} disabled={!selectedFile}>
-            Send Excel File
-          </Button>
+          <button
+            onClick={handleSendEmail}
+            disabled={!selectedFile}
+            className="submit-button"
+          >
+            Upload Excel File
+          </button>
 
           {successMessage && (
-            <div className="mt-6 bg-green-100 text-green-800 p-4 rounded-md shadow-sm border border-green-300">
+            <div className="success-message">
               {successMessage}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      {/* Modal */}
+      {showPopup && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h2>Password Protected File</h2>
+            <p>Please upload an Excel file that is <strong>not password protected</strong>.</p>
+            <button onClick={() => setShowPopup(false)}>OK</button>
+          </div>
+        </div>
+      )}
 
       <ToastContainer
         position="top-center"
