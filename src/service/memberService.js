@@ -85,8 +85,8 @@ const importMembers = async (jsonData) => {
   const token = localStorage.getItem('accessToken');
   return await axios.post(importMembersURL, jsonData, {
     headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`
+      // ✅ DO NOT set 'Content-Type': 'multipart/form-data' manually
     }
   });
 };

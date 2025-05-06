@@ -16,22 +16,22 @@ import RenewMembershipPage from './components/Dashboard/Members/RenewMembershipP
 
 function App() {
   const isAuthenticated = () => {
-    // if(localStorage == null) {
-    //   return false;
-    // }
+    if(localStorage == null) {
+      return false;
+    }
     const token = localStorage.getItem('accessToken');
     return token != null && !isTokenExpired(token);
   };
 
   const getDefaultRedirect = () => {
     if (!localStorage.getItem("accessToken")) {
-      return null; // Prevent redirection if no token exists
+      return false; // Prevent redirection if no token exists
     }
     if (isAuthenticated()) {
       const role = getUserRole();
       return role === 'ADMIN' ? '/admin-dashboard' : '/dashboard';
     }
-    return null;
+    return false;
   };
 
   return (

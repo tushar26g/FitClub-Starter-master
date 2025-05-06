@@ -57,9 +57,12 @@ const [snackbarMessage, setSnackbarMessage] = useState('');
       }
     } catch (error) {
       if (error.response && error.response.status === 403) {
-        console.log("Unauthorized or expired token. Logging out.");
-        localStorage.clear();
+        setTimeout(() =>
+        {
+          localStorage.clear();
+        },4000)
         navigate("/");
+        window.location.href = "/";
       }
     }
   };
