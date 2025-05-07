@@ -11,22 +11,26 @@ const Sidebar = () => {
   const location = useLocation();
   const owner = JSON.parse(localStorage.getItem('owner'));
 
-  const [expanded, setExpanded] = useState(true);
+  // INITIALLY set expanded to false and determine device later
+  const [expanded, setExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+  // Set correct expanded state based on screen size on mount AND resize
   useEffect(() => {
     const handleResize = () => {
       const isNowMobile = window.innerWidth <= 768;
       setIsMobile(isNowMobile);
-      if (!isNowMobile) setExpanded(true);
+      setExpanded(!isNowMobile); // Always collapse on mobile, expand on desktop
     };
+
+    handleResize(); // Call once on mount
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const sidebarVariants = {
     expanded: { left: 0 },
-    collapsed: { left: '-77%' }
+    collapsed: { left: '-199%' }
   };
 
   return (
@@ -52,17 +56,24 @@ const Sidebar = () => {
             <div
               key={index}
               className={`menuItem2 ${location.pathname === item.path ? "active" : ""}`}
-              onClick={() => navigate(item.path)}
+              onClick={() => {
+                navigate(item.path);
+                if (isMobile) setExpanded(false);
+              }}
             >
               <item.icon />
               <span>{item.heading}</span>
             </div>
           ))}
 
-          <div className="menuItem2" onClick={() => {
-            localStorage.clear();
-            navigate("/");
-          }}>
+          <div
+            className="menuItem2"
+            onClick={() => {
+              localStorage.clear();
+              navigate("/");
+              if (isMobile) setExpanded(false);
+            }}
+          >
             <UilSignOutAlt />
             Log Out
           </div>

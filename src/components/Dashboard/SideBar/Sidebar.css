@@ -85,7 +85,7 @@
 }
 
   .sidebar {
-    position: sticky;
+    position: absolute;
     top: 0;
     left: 0;
     z-index: 99;
@@ -96,6 +96,7 @@
     box-shadow: 2px 0px 8px rgba(0, 0, 0, 0.1);
     align-self: start;
     height: fit-content;
+    transition: left 0.3s ease;
   }
 
   .menuItem2 > span {
@@ -116,7 +117,7 @@
     position: fixed;
     top: 1.5rem;
     left: 1rem;
-    background: #ffe0e0;
+    background: var(--orange);
     padding: 10px;
     border-radius: 10px;
     z-index: 100;
