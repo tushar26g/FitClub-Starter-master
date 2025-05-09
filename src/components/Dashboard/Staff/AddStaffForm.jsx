@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef  } from "react";
 import staffService from "../../../service/staffService";
 import "./AddStaffForm.css";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const AddStaffForm = ({ onMemberAdded }) => {
   const today = new Date().toISOString().split("T")[0];
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -102,12 +104,23 @@ const AddStaffForm = ({ onMemberAdded }) => {
       }
     } catch (err) {
       console.error("Add Staff Error:", err);
-      if (err.response?.data?.message) {
+      if (err.response?.status === 403) { 
+        console.error("403 Forbidden: Redirecting to login page.");
+        setTimeout(() =>
+        {
+          localStorage.clear();
+        },5000)
+        navigate("/");
+        window.location.href = "/";
+      } else if (err.response?.data?.message) {
         setError(err.response.data.message);
       } else {
         setError("Failed to add staff. Try again.");
       }
       setMessage("");
+      if (err.response && err.response.status === 403) {
+        
+      }
     }
   };
 

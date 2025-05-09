@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Paper, TextField, Button, MenuItem, Snackbar, Avatar
@@ -13,8 +13,10 @@ import enquiryService from "../../../service/enquiryService";
 import DeleteConfirmationPopup from "../Table/DeleteConfirmationPopup";
 import "../Table/Table.css"; // CSS remains
 import { formatExcelDateTime } from "../../../Utils/utils";
+import { useNavigate } from "react-router-dom";
 
 export default function EnquiryTable() {
+  const navigate = useNavigate();
   const [enquiries, setEnquiries] = useState([]);
   const [filteredEnquiries, setFilteredEnquiries] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,6 +38,14 @@ export default function EnquiryTable() {
       }
     } catch (error) {
       console.error("Error fetching enquiries", error);
+      if (error.response && error.response.status === 403) {
+        setTimeout(() =>
+        {
+          localStorage.clear();
+        },5000)
+        navigate("/");
+        window.location.href = "/";
+      }
     }
   };
   

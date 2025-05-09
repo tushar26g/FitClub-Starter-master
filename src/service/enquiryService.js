@@ -1,6 +1,7 @@
 import axios from 'axios';
 import configURL from '../config/configURL';
 import api from "./api";
+import { isMembershipExpired } from "../Utils/membershipUtils";
 
 const {
   addEnquiryURL,
@@ -14,6 +15,13 @@ const authService = {
 };
 
 const addEnquiry = async (data) => {
+  const ownerData = JSON.parse(localStorage.getItem('owner'));
+  
+    if (isMembershipExpired(ownerData)) {
+      console.log("Membership expired. Redirecting to renew page.");
+      window.location.href = '/renew-owner';
+      return;
+    }
   const token = localStorage.getItem("accessToken");
   return await axios.post(addEnquiryURL, data, {
     headers: {
@@ -25,6 +33,13 @@ const addEnquiry = async (data) => {
 
 // enquiryService.js
 const getEnquiries = async (search = "", interestLevel = "") => {
+  const ownerData = JSON.parse(localStorage.getItem('owner'));
+  
+    if (isMembershipExpired(ownerData)) {
+      console.log("Membership expired. Redirecting to renew page.");
+      window.location.href = '/renew-owner';
+      return;
+    }
   const token = localStorage.getItem("accessToken");
 
   const params = new URLSearchParams();
@@ -40,6 +55,13 @@ const getEnquiries = async (search = "", interestLevel = "") => {
 };
 
 const deleteEnquiry = async (enquiryId) => {
+  const ownerData = JSON.parse(localStorage.getItem('owner'));
+  
+    if (isMembershipExpired(ownerData)) {
+      console.log("Membership expired. Redirecting to renew page.");
+      window.location.href = '/renew-owner';
+      return;
+    }
   const token = localStorage.getItem("accessToken");
   return await axios.delete(`${deleteEnquiryURL}`, {
     headers: {

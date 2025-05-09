@@ -15,12 +15,11 @@ import attendanceService from '../../../service/attendanceService';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './calendarStyles.css'; // you'll create this for custom date styling
-import { Dialog, DialogTitle, DialogContent, IconButton, Tooltip, MenuItem, Select, Box  } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, IconButton, Tooltip, Box  } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteConfirmationPopup from "../Table/DeleteConfirmationPopup";
 import { formatExcelDateTime } from "../../../Utils/utils";
-import { lightBlue, red } from '@mui/material/colors';
 import { useNavigate } from "react-router-dom";
 
 export default function StaffTable() {
@@ -91,6 +90,14 @@ const [attendanceData, setAttendanceData] = useState([]);
       }
     } catch (error) {
       console.error("Error fetching staff details", error);
+      if (error.response && error.response.status === 403) {
+        setTimeout(() =>
+        {
+          localStorage.clear();
+        },5000)
+        navigate("/");
+        window.location.href = "/";
+      }
     }
   };
 

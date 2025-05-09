@@ -1,6 +1,7 @@
 import axios from 'axios';
 import configURL from '../config/configURL';
-import api from "./api";
+// import api from "./api";
+import { isMembershipExpired } from "../Utils/membershipUtils";
 
 const {
   addMemberURL,
@@ -12,12 +13,19 @@ const {
   analysisMemberURL
 } = configURL;
 
-const authService = {
-  login: (data) => api.post("/auth/login", data),
-  getProfile: () => api.get("/user/profile"), // will auto attach token
-};
+// const authService = {
+//   login: (data) => api.post("/auth/login", data),
+//   getProfile: () => api.get("/user/profile"), // will auto attach token
+// };
 
 const addMember = async (formData) => {
+  const ownerData = JSON.parse(localStorage.getItem('owner'));
+
+  if (isMembershipExpired(ownerData)) {
+    console.log("Membership expired. Redirecting to renew page.");
+    window.location.href = '/renew-owner';
+    return;
+  }
   const token = localStorage.getItem('accessToken');
   return await axios.post(addMemberURL, formData, {
     headers: {
@@ -28,6 +36,12 @@ const addMember = async (formData) => {
 };
 
 const getMembers = async () => {
+  const ownerData = JSON.parse(localStorage.getItem('owner'));
+
+  if (isMembershipExpired(ownerData)) {
+    window.location.href = '/renew-owner'; // or use navigate()
+    return;
+  }
   try {
   const token = localStorage.getItem('accessToken');
   const response = await axios.get(getMembersByOwnerURL, {
@@ -46,6 +60,13 @@ throw error;
 };
 
 const deleteMember = async (memberId) => {
+  const ownerData = JSON.parse(localStorage.getItem('owner'));
+
+  if (isMembershipExpired(ownerData)) {
+    console.log("Membership expired. Redirecting to renew page.");
+    window.location.href = '/renew-owner';
+    return;
+  }
   const token = localStorage.getItem('accessToken');
   try {
     const response = await axios.delete(`${deleteMemberURL}`, {
@@ -63,6 +84,13 @@ const deleteMember = async (memberId) => {
 };
 
 const updateStatus = async (data) => {
+  const ownerData = JSON.parse(localStorage.getItem('owner'));
+
+  if (isMembershipExpired(ownerData)) {
+    console.log("Membership expired. Redirecting to renew page.");
+    window.location.href = '/renew-owner';
+    return;
+  }
   const token = localStorage.getItem('accessToken');
   return await axios.post(updateMembershipStatusURL, data, {
     headers: {
@@ -72,6 +100,13 @@ const updateStatus = async (data) => {
 };
 
 const updateMember = async (data) => {
+  const ownerData = JSON.parse(localStorage.getItem('owner'));
+
+  if (isMembershipExpired(ownerData)) {
+    console.log("Membership expired. Redirecting to renew page.");
+    window.location.href = '/renew-owner';
+    return;
+  }
   const token = localStorage.getItem('accessToken');
   return await axios.put(updateMemberURL, data, {
     headers: {
@@ -82,6 +117,13 @@ const updateMember = async (data) => {
 };
 
 const importMembers = async (jsonData) => {
+  const ownerData = JSON.parse(localStorage.getItem('owner'));
+
+  if (isMembershipExpired(ownerData)) {
+    console.log("Membership expired. Redirecting to renew page.");
+    window.location.href = '/renew-owner';
+    return;
+  }
   const token = localStorage.getItem('accessToken');
   return await axios.post(importMembersURL, jsonData, {
     headers: {
@@ -92,6 +134,13 @@ const importMembers = async (jsonData) => {
 };
 
 const analysisMembers = async () => {
+  const ownerData = JSON.parse(localStorage.getItem('owner'));
+
+  if (isMembershipExpired(ownerData)) {
+    console.log("Membership expired. Redirecting to renew page.");
+    window.location.href = '/renew-owner';
+    return;
+  }
   try {
   const token = localStorage.getItem('accessToken');
   const response = await axios.get(analysisMemberURL, {

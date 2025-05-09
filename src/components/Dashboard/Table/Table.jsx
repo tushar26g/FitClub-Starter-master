@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import CreditCardIcon from '@mui/icons-material/Update';
 import MuiAlert from '@mui/material/Alert';
-import { useSnackbar } from 'notistack';
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -38,7 +37,6 @@ const getStatusStyle = (status) => {
 };
 
 export default function BasicTable() {
-  const { enqueueSnackbar } = useSnackbar();
   const [members, setMembers] = useState([]);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");

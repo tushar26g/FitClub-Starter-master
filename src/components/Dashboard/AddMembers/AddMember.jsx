@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import memberService from "../../../service/memberService";
 import "./AddMember.css";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const AddMember = ({ onMemberAdded }) => {
    const fileInputRef = useRef(null);
   const [packageError, setPackageError] = useState(""); // for error handling
   const [dob, setDob] = useState('');
   const today = new Date().toISOString().split("T")[0];
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     mobileNumber: "",
@@ -212,6 +214,14 @@ const AddMember = ({ onMemberAdded }) => {
   
       setMessage("");
       setTimeout(() => setError(""), 3000);
+      if (err.response && err.response.status === 403) {
+        setTimeout(() =>
+        {
+          localStorage.clear();
+        },5000)
+        navigate("/");
+        window.location.href = "/";
+      }
     }
   };
   

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion"; // Make sure you import this if you're using motion
 import enquiryService from "../../../service/enquiryService";
+import { useNavigate } from "react-router-dom";
 
 const Enquiry = ({ onMemberAdded }) => {
   const today = new Date().toISOString().split("T")[0];
   const fileInputRef = useRef(null);
+    const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -85,6 +87,14 @@ const Enquiry = ({ onMemberAdded }) => {
         setError("Failed to add enquiry. Try again.");
       }
       setMessage("");
+      if (err.response && err.response.status === 403) {
+        setTimeout(() =>
+        {
+          localStorage.clear();
+        },5000)
+        navigate("/");
+        window.location.href = "/";
+      }
     }
   };
   

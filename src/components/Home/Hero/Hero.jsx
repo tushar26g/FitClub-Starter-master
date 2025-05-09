@@ -61,7 +61,7 @@ const Hero = () => {
                     </div>
 
                     <div className="hero-buttons">
-                        <button className="btn" onClick={handleJoinClick}>Join Now</button> {/* ✅ Register First */}
+                        <button className="btn" onClick={handleJoinClick}>Register Now</button> {/* ✅ Register First */}
                         <button className="btn" onClick={handleSignInClick}>Sign In</button> {/* ✅ Login First */}
                     </div>
                 </div>

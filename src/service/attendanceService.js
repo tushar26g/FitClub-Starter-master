@@ -1,6 +1,7 @@
 import axios from 'axios';
 import configURL from '../config/configURL';
 import api from "./api";
+import { isMembershipExpired } from "../Utils/membershipUtils";
 
 const {
   markAttendanceURL,
@@ -15,6 +16,13 @@ const authService = {
 };
 
 const markAttendance = async (data) => {
+  const ownerData = JSON.parse(localStorage.getItem('owner'));
+  
+    if (isMembershipExpired(ownerData)) {
+      console.log("Membership expired. Redirecting to renew page.");
+      window.location.href = '/renew-owner';
+      return;
+    }
   const token = localStorage.getItem("accessToken");
   return await axios.post(markAttendanceURL, data, {
     headers: {
@@ -26,6 +34,13 @@ const markAttendance = async (data) => {
 const markLeave = async (data) => await axios.post(markLeaveRangeURL, data);
 const getHistory = async () => await axios.get(attendanceHistoryURL);
 const getStaffAttendance = async (staffId) => {
+  const ownerData = JSON.parse(localStorage.getItem('owner'));
+  
+    if (isMembershipExpired(ownerData)) {
+      console.log("Membership expired. Redirecting to renew page.");
+      window.location.href = '/renew-owner';
+      return;
+    }
   const token = localStorage.getItem("accessToken");
   return await axios.get(getStaffAttendanceURL.replace("{staffId}", staffId), {
     headers: {

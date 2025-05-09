@@ -16,9 +16,7 @@ const Cards = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching analysis data...");
         const response = await memberService.analysisMembers();
-        console.log("Analysis data fetched successfully:", response.data);
         const data = response.data.data;
 
         setCards([

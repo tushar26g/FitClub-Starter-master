@@ -9,6 +9,7 @@ import {
 import { useSnackbar } from "notistack";
 import gymOwnerService from "../../service/authService";
 import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 
 function GymOwnerRegistrationForm() {
   const { enqueueSnackbar } = useSnackbar();
@@ -26,6 +27,7 @@ function GymOwnerRegistrationForm() {
   });
 
   const [errors, setErrors] = useState({});
+  const [showTrialPopup, setShowTrialPopup] = useState(false);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -41,6 +43,7 @@ function GymOwnerRegistrationForm() {
       fullName: !formData.fullName.trim(),
       mobile: !/^\d{10}$/.test(formData.mobile),
       password: !formData.password.trim(),
+      businessName: !formData.businessName.trim(),
     };
     setErrors(newErrors);
     return !Object.values(newErrors).some(Boolean);
@@ -87,7 +90,13 @@ function GymOwnerRegistrationForm() {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('owner', JSON.stringify(owner));
-        navigate('/dashboard');
+        setShowTrialPopup(true);
+  
+        // Automatically redirect after 3 seconds
+        setTimeout(() => {
+          setShowTrialPopup(false);
+          navigate("/dashboard");
+        }, 2500);
       } else {
         enqueueSnackbar(res.data.message || "Registration failed", {
           variant: "error",
@@ -178,13 +187,16 @@ function GymOwnerRegistrationForm() {
         sx={compactInputStyle}
       />
 
-      <TextField
-        label="Club/Business Name"
-        value={formData.businessName}
-        onChange={(e) => handleChange("businessName", e.target.value)}
-        size="small"
-        sx={compactInputStyle}
-      />
+<TextField
+  label="Club/Business Name*"
+  value={formData.businessName}
+  onChange={(e) => handleChange("businessName", e.target.value)}
+  error={errors.businessName}
+  helperText={errors.businessName ? "Business name is required" : ""}
+  size="small"
+  sx={compactInputStyle}
+/>
+
 
       <TextField
         label="Address"
@@ -211,6 +223,29 @@ function GymOwnerRegistrationForm() {
           Register
         </Button>
       </Box>
+      <Dialog
+  open={showTrialPopup}
+  maxWidth="xs"
+  fullWidth
+  sx={{
+    "& .MuiPaper-root": {
+      backgroundColor: "#FFDEE9",
+      backgroundImage: "linear-gradient(0deg, #FFDEE9 0%, #B5FFFC 100%)",
+    },
+  }}
+>
+  <DialogTitle textAlign="center" sx={{ fontWeight: 'bold' }}>
+    Welcome!
+  </DialogTitle>
+  <DialogContent sx={{ textAlign: "center", fontSize: "1rem", paddingBottom: 3 }}>
+    🎉 Enjoy <strong>100 days</strong> of free trial!
+    <Box mt={2} fontSize="0.9rem" color="gray">
+      Redirecting to dashboard...
+    </Box>
+  </DialogContent>
+</Dialog>
+
+
     </div>
   );
 }

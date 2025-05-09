@@ -12,6 +12,7 @@ import MemberDetailsPage from './components/Dashboard/Members/MemberDetailsPage'
 import ImportMembersPage from './components/Dashboard/Excel/ImportMembersPage';
 import AdminDashboardPage from './components/Admin/AdminDashboard';
 import { decodeToken, isTokenExpired, getUserRole } from './Utils/authHelper';
+import RenewOwnershipPage from './components/Auth/RenewOwnershipPage';
 import RenewMembershipPage from './components/Dashboard/Members/RenewMembershipPage';
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
 
           {/* Admin Dashboard */}
           <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
+          <Route path="/renew-owner" element={<RenewOwnershipPage />} />
 
           {/* Owner Dashboard and nested routes */}
           <Route path="/dashboard" element={<DashboardLayout />}>

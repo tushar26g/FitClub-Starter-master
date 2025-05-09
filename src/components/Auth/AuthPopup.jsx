@@ -8,6 +8,7 @@ const AuthPopup = ({ show, defaultForm = 'login', closePopup }) => {
 
   useEffect(() => {
     if (show) {
+      setActiveForm(defaultForm); 
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';

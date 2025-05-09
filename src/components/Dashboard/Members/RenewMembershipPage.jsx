@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   TextField,
   Button,
@@ -15,7 +15,6 @@ function RenewMembershipPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({
     package: false,
     amountPaid: false,
@@ -147,7 +146,7 @@ const dto = {
           variant: "success",
           anchorOrigin: { vertical: "top", horizontal: "center" },
         });
-        setTimeout(() => navigate(-1), 1000);
+        setTimeout(() => navigate(-1), 2000);
       } else {
         enqueueSnackbar(response.data.message || "Renewal failed", {
           variant: "error",
