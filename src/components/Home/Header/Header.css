@@ -41,7 +41,7 @@
      Menu Icon Styles
   =================== */
   .menu-icon {
-    background-color: var(--appColor);
+    background-color: var(--orange);
     padding: 0.4rem;
     border-radius: 5px;
     cursor: pointer;
@@ -169,6 +169,7 @@
   
     .menu-icon {
       margin-top: 3rem;
+      margin-right: -1.7rem;
     }
   
     .btn.login-btn2 {

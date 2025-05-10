@@ -3,10 +3,18 @@ import "./Header.css";
 import Logo from "../../../assets/logo.png";
 import Bars from "../../../assets/bars.png";
 import { Link } from "react-scroll";
+import AuthPopup from '../../Auth/AuthPopup'; 
 
 const Header = ({ onOpenLogin }) => {
   const [menuOpened, setMenuOpened] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+const [showAuth, setShowAuth] = useState(false);
+    const [defaultForm, setDefaultForm] = useState("login"); // ✅ Track default form
+
+const handleSignInClick = () => {
+        setDefaultForm("login");  // Open login first
+        setShowAuth(true);
+    };
 
   useEffect(() => {
     const handleResize = () => {
@@ -27,15 +35,20 @@ const Header = ({ onOpenLogin }) => {
     { to: "contactUs", label: "Contact us" },
   ];
 
+  const handleCloseAuth = () => setShowAuth(false);
+
   return (
     <header className="header" id="header">
       <img src={Logo} alt="Logo" className="logo" />
 
       {/* Sign In Button */}
       
-      <button className="btn login-btn2" onClick={onOpenLogin}>
-        Sign In
-      </button>
+      {isMobile && (
+  <button className="btn login-btn2" onClick={handleSignInClick}>
+    Sign In
+  </button>
+)}
+
 
       {/* Mobile Menu Icon */}
       {isMobile && !menuOpened ? (
@@ -59,6 +72,8 @@ const Header = ({ onOpenLogin }) => {
           ))}
         </ul>
       )}
+      {/* ✅ Popup Modal with sliding auth */}
+            <AuthPopup show={showAuth} closePopup={handleCloseAuth} defaultForm={defaultForm} />
     </header>
   );
 };

@@ -54,8 +54,7 @@ const Hero = () => {
                         </div>
                         <div>
                             <span>
-                                In here, we will help you to manage and shape your ideal 
-                                gym and live your life to the fullest.
+                                The ultimate gym management application—effortless, powerful, and built for success
                             </span>
                         </div>
                     </div>

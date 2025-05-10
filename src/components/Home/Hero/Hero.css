@@ -198,6 +198,7 @@
         font-size: xx-large;
         align-items: center;
         justify-content: center;
+        gap: 0.5rem;
     }
     
     .hero-text > div:nth-of-type(3) {

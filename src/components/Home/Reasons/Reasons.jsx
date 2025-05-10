@@ -26,19 +26,19 @@ const Reasons = () => {
         <div className="details-r">
           <div>
             <img src={tick} alt="" />
-            <span>OVER 140+ EXPERT COACHES</span>
+            <span>24/7 Customer Support</span>
           </div>
           <div>
             <img src={tick} alt="" />
-            <span>TRAIN SMARTER AND FASTER THAN BEFORE</span>
+            <span>User-Friendly Interface</span>
           </div>
           <div>
             <img src={tick} alt="" />
-            <span>1 FREE PROGRAM FOR NEW MEMBERS</span>
+            <span>Secure and Private</span>
           </div>
           <div>
             <img src={tick} alt="" />
-            <span>RELIABLE PARTNERS</span>
+            <span>100 Days Free Trial</span>
           </div>
         </div>
       </div>

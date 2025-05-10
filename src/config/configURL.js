@@ -5,6 +5,7 @@ const configURL = {
   // Auth URLs
   registerOwnerURL: `${baseURL}/auth/register`,
   loginOwnerAdminURL: `${baseURL}/auth/login`,
+  publicContactURL: `${baseURL}/auth/contact`,
 
   // Admin URLs
   getAllOwnersURL: `${baseURL}/admin/owners`,

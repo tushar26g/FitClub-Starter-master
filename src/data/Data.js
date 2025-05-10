@@ -19,9 +19,6 @@ import {
   import img2 from "../imgs/img2.png";
   import img3 from "../imgs/img3.png";
   
-  // Sidebar Data
-  // import { UilEstate, UilUserPlus, UilUserMd, UilClipboardAlt, UilUsersAlt } from '@iconscout/react-unicons';
-
 export const SidebarData = [
   { icon: UilEstate, heading: "Dashboard", path: "/dashboard" },
   { icon: UilUserPlus, heading: "Add Member", path: "/dashboard/add-member" },
