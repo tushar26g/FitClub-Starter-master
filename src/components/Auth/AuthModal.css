@@ -122,9 +122,11 @@ input {
 }
 
 .forgot-password {
-  font-size: 0.85rem;
-  color: gray;
+  /* font-size: 0.85rem; */
   text-align: center;
+  cursor: pointer;
+  color: #007bff;
+  text-decoration: underline;
 }
 
 @media (max-width: 768px) {
@@ -219,4 +221,17 @@ input {
 /* Apply site color */
 .colored-bg {
   background-color: var(--orange);
+}
+
+.success-text {
+  color: green;
+  font-weight: 500;
+}
+
+.back-to-login {
+  margin-top: 10px;
+  cursor: pointer;
+  color: #007bff;
+  text-decoration: underline;
+  text-align: center;
 }

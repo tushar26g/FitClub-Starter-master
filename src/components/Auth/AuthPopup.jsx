@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import './AuthModal.css';
+import ForgotPasswordForm from './ForgotPasswordForm';
 
 const AuthPopup = ({ show, defaultForm = 'login', closePopup }) => {
   const [activeForm, setActiveForm] = useState(defaultForm);
@@ -39,12 +40,11 @@ const AuthPopup = ({ show, defaultForm = 'login', closePopup }) => {
 
         {/* Form Section */}
         <div className="auth-form-container">
-          {activeForm === 'login' ? (
-            <LoginForm onSwitch={() => handleSwitch('register')} />
-          ) : (
-            <RegisterForm onSwitch={() => handleSwitch('login')} />
-          )}
-        </div>
+  {activeForm === 'login' && <LoginForm onSwitch={handleSwitch} />}
+  {activeForm === 'register' && <RegisterForm onSwitch={handleSwitch} />}
+  {activeForm === 'forgot' && <ForgotPasswordForm onSwitch={handleSwitch} />}
+</div>
+
 
         {/* Switch Text Section */}
         <div className="auth-switch-container">

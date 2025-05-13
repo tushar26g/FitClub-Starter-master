@@ -1,7 +1,7 @@
 import axios from "axios";
 import configURL from "../config/configURL";
 
-const { registerOwnerURL, loginOwnerAdminURL, publicContactURL } = configURL;
+const { registerOwnerURL, loginOwnerAdminURL, publicContactURL, forgotPasswordURL } = configURL;
 
 // ✅ Register a gym owner (no token required)
 const registerOwner = async (ownerData) => {
@@ -22,8 +22,14 @@ const sendContactQuery = async (data) => {
   return response.data;
 };
 
+const forgotPassword = async ({ mobileNumber }) => {
+  const response = await axios.post(forgotPasswordURL, { mobileNumber });
+  return response.data;
+};
+
 export default {
   registerOwner,
   login,
   sendContactQuery,
+  forgotPassword,
 };

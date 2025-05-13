@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // ✅ Named import
 import './AuthModal.css';
 
-const LoginForm = () => {
+const LoginForm = ({ onSwitch }) => {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -61,7 +61,10 @@ const LoginForm = () => {
       <button className="btn-orange" type="submit">Login</button>
 
       {errorMessage && <p className="error-text">{errorMessage}</p>}
-      <p className="forgot-password">Forgot Password?</p>
+      <p className="forgot-password" onClick={() => onSwitch('forgot')}>
+  Forgot Password?
+</p>
+
     </form>
   );
 };
