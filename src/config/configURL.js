@@ -25,6 +25,7 @@ const configURL = {
   updateMemberURL: `${baseURL}/members/update`,
   importMembersURL: `${baseURL}/members/import-members`,
   analysisMemberURL: `${baseURL}/members/analysis`,
+  refreshAccessTokenURL: `${baseURL}/members/refresh`,
 
   // Attendance URLs
   markAttendanceURL: `${baseURL}/attendance/mark`,

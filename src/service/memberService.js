@@ -10,7 +10,8 @@ const {
   updateMembershipStatusURL,
   updateMemberURL,
   importMembersURL,
-  analysisMemberURL
+  analysisMemberURL,
+  refreshAccessTokenURL
 } = configURL;
 
 // const authService = {
@@ -151,11 +152,33 @@ const analysisMembers = async () => {
   return response;
 } catch (error) {
   if (error.response && error.response.status === 403) {
-      console.warn("Unauthorized or expired token. Logging out.");
       localStorage.clear();
     } 
 throw error;
 }
+};
+
+const refreshAccessToken = async () => {
+  const ownerData = JSON.parse(localStorage.getItem('owner'));
+  const token = localStorage.getItem("accessToken");
+  if (!token) return;
+
+  try {
+    const response = await axios.get(`${refreshAccessTokenURL}?mobileNumber=${encodeURIComponent(ownerData.mobileNumber)}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const newToken = response.data.accessToken;
+    console.log("Tushar New token received:", newToken);
+    localStorage.setItem("accessToken", newToken);
+
+    return newToken;
+  } catch (err) {
+    console.error("Token refresh failed", err);
+    throw err;
+  }
 };
 
 export default {
@@ -166,4 +189,5 @@ export default {
   updateMember,
   importMembers,
   analysisMembers,
+  refreshAccessToken,
 };

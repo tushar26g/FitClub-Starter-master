@@ -24,6 +24,8 @@ import "./Table.css";
 import memberService from "../../../service/memberService";
 import { useNavigate } from "react-router-dom";
 import DeleteConfirmationPopup from "./DeleteConfirmationPopup"; 
+import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { checkAndRefreshTokenIfOld } from "../../../Utils/authUtils";
 
 const getStatusStyle = (status) => {
   switch (status) {
@@ -45,6 +47,21 @@ export default function BasicTable() {
 const [selectedItem, setSelectedItem] = useState(null);
 const [snackbarOpen, setSnackbarOpen] = useState(false);
 const [snackbarMessage, setSnackbarMessage] = useState('');
+const [accountStatus, setAccountStatus] = useState("TRIAL"); // or "ACTIVE"
+const [exportDialogOpen, setExportDialogOpen] = useState(false);
+
+useEffect(() => {
+  const ownerString = localStorage.getItem("owner");
+  if (ownerString) {
+    try {
+      const owner = JSON.parse(ownerString);
+      console.log("Account status:", owner.accountStatus);
+      setAccountStatus(owner.accountStatus); // Set "ACTIVE" or "TRIAL"
+    } catch (e) {
+      console.error("Failed to parse owner from localStorage:", e);
+    }
+  }
+}, []);
 
   const fetchMembers = async () => {
     try {
@@ -53,6 +70,9 @@ const [snackbarMessage, setSnackbarMessage] = useState('');
         setMembers(response.data.data);
         setFilteredMembers(response.data.data);
       }
+      console.log("before checking token");
+      await checkAndRefreshTokenIfOld();
+      console.log("after checking token");
     } catch (error) {
       if (error.response && error.response.status === 403) {
         setTimeout(() =>
@@ -138,13 +158,20 @@ const [snackbarMessage, setSnackbarMessage] = useState('');
             }}
           />
           <Button
-            variant="contained"
-            style={{ backgroundColor: "var(--orange)", color: "white", marginLeft: "1rem" }}
-            startIcon={<DownloadIcon />}
-            onClick={exportToExcel}
-          >
-            Export
-          </Button>
+  variant="contained"
+  style={{ backgroundColor: "var(--orange)", color: "white", marginLeft: "1rem" }}
+  startIcon={<DownloadIcon />}
+  onClick={() => {
+    if (accountStatus === "ACTIVE") {
+      exportToExcel();
+    } else {
+      setExportDialogOpen(true);
+    }
+  }}
+>
+  Export
+</Button>
+
         </div>
       </div>
 
@@ -242,6 +269,26 @@ const [snackbarMessage, setSnackbarMessage] = useState('');
     photo={selectedItem.profilePhoto ? `data:image/jpeg;base64,${selectedItem.profilePhoto}` : '/default-profile.png'}
   />
 )}
+
+<Dialog open={exportDialogOpen} onClose={() => setExportDialogOpen(false)} sx={{
+        "& .MuiPaper-root": {
+          backgroundColor: "#FFDEE9",
+          backgroundImage: "linear-gradient(0deg, #FFDEE9 0%, #B5FFFC 100%)",
+        },
+      }}>
+  <DialogTitle>Download Restricted</DialogTitle>
+  <DialogContent>
+    <p>You are currently in the <strong>TRIAL</strong> period.</p>
+    <p>Excel export is only available after purchasing a membership.</p>
+    <p>For membership, please contact <strong>Krishna Shinde</strong> at <strong>9604016475</strong>.</p>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setExportDialogOpen(false)} variant="contained" style={{ backgroundColor: "var(--orange)", color: "white" }}>
+      OK
+    </Button>
+  </DialogActions>
+</Dialog>
+
 
     </div>
   );

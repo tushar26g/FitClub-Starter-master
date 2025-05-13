@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './AuthModal.css'; // Reuse your styling
-
+import './ResetPasswordPage.css'; // Reuse your styling
 const ResetPasswordPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -47,8 +47,8 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <div className="auth-popup-overlay">
-      <div className="auth-popup" style={{ maxWidth: '400px' }}>
+    <div className="auth-popup-overlay2">
+      <div className="auth-popup2" style={{ maxWidth: '400px' }}>
         <form className="form-container" onSubmit={handleResetPassword}>
           <h2>Reset Password</h2>
           <input
