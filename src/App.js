@@ -14,6 +14,7 @@ import AdminDashboardPage from './components/Admin/AdminDashboard';
 import { decodeToken, isTokenExpired, getUserRole } from './Utils/authHelper';
 import RenewOwnershipPage from './components/Auth/RenewOwnershipPage';
 import RenewMembershipPage from './components/Dashboard/Members/RenewMembershipPage';
+import ResetPasswordPage from './components/Auth/ResetPasswordPage';
 
 function App() {
   const isAuthenticated = () => {
@@ -57,6 +58,7 @@ function App() {
           {/* Admin Dashboard */}
           <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
           <Route path="/renew-owner" element={<RenewOwnershipPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           {/* Owner Dashboard and nested routes */}
           <Route path="/dashboard" element={<DashboardLayout />}>
