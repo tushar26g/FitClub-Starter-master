@@ -82,11 +82,6 @@ const AddMember = ({ onMemberAdded }) => {
     if (name === "mobileNumber" && (!/^\d{0,10}$/.test(value))) return;
 
     setFormData((prev) => ({ ...prev, [name]: value }));
-
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
     
       // Clear the packageError if the user selects a valid option
       if (name === "packageName" && value !== "Select Package") {
@@ -224,16 +219,6 @@ const AddMember = ({ onMemberAdded }) => {
       }
     }
   };
-  
-
-  const calculateBMI = () => {
-    const h = parseFloat(height) / 100; // convert cm to meters
-    const w = parseFloat(weight);
-    if (h > 0 && w > 0) {
-      const result = (w / (h * h)).toFixed(1);
-      setBmi(result);
-    }
-  };
 
   const getBMIPosition = () => {
     const val = parseFloat(bmi);
@@ -304,9 +289,19 @@ const AddMember = ({ onMemberAdded }) => {
 
 
         <label>
-          Email
-          <input type="email" name="email" value={formData.email} onChange={handleChange} />
-        </label>
+          <span>
+  Email <span className="required">*</span></span>
+  <input
+    type="email"
+    name="email"
+    value={formData.email}
+    onChange={handleChange}
+    required // This makes the email field required
+    pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" // Email regex for validation
+    title="Please enter a valid email address" // Optional: Tooltip for invalid email
+  />
+</label>
+
 
         {/* Gender */}
         <label>

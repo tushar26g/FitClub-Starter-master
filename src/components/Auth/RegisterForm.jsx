@@ -14,6 +14,10 @@ import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material
 function GymOwnerRegistrationForm() {
   const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
+const [errorDialog, setErrorDialog] = useState({
+  open: false,
+  message: "",
+});
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -42,6 +46,7 @@ function GymOwnerRegistrationForm() {
     const newErrors = {
       fullName: !formData.fullName.trim(),
       mobile: !/^\d{10}$/.test(formData.mobile),
+    email: !formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email),
       password: !formData.password.trim(),
       businessName: !formData.businessName.trim(),
     };
@@ -98,16 +103,18 @@ function GymOwnerRegistrationForm() {
           navigate("/dashboard");
         }, 2500);
       } else {
-        enqueueSnackbar(res.data.message || "Registration failed", {
-          variant: "error",
-          anchorOrigin: { vertical: "top", horizontal: "center" },
-        });
+        setErrorDialog({
+  open: true,
+  message: res.message || "Registration failed",
+});
+
       }
     } catch (err) {
-      enqueueSnackbar("Something went wrong", {
-        variant: "error",
-        anchorOrigin: { vertical: "top", horizontal: "center" },
-      });
+      setErrorDialog({
+  open: true,
+  message: "Something went wrong. Please try again.",
+});
+
       console.error(err);
     }
   };
@@ -169,12 +176,15 @@ function GymOwnerRegistrationForm() {
       />
 
       <TextField
-        label="Email"
-        value={formData.email}
-        onChange={(e) => handleChange("email", e.target.value)}
-        size="small"
-        sx={compactInputStyle}
-      />
+  label="Email*"
+  value={formData.email}
+  onChange={(e) => handleChange("email", e.target.value)}
+  error={errors.email}
+  helperText={errors.email ? "Valid email is required" : ""}
+  size="small"
+  sx={compactInputStyle}
+/>
+
 
       <TextField
         label="Password*"
@@ -245,6 +255,17 @@ function GymOwnerRegistrationForm() {
   </DialogContent>
 </Dialog>
 
+<Dialog open={errorDialog.open} onClose={() => setErrorDialog({ open: false, message: "" })}>
+  <DialogTitle sx={{ fontWeight: 'bold', color: 'red' }}>Registration Error</DialogTitle>
+  <DialogContent sx={{ fontSize: "0.95rem" }}>
+    {errorDialog.message}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setErrorDialog({ open: false, message: "" })} sx={{ color: "var(--orange)" }}>
+      Close
+    </Button>
+  </DialogActions>
+</Dialog>
 
     </div>
   );
