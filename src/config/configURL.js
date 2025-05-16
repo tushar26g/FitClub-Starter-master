@@ -1,6 +1,7 @@
 // All the Service URLs are to be included here...
-const baseURL = 'https://gymnotify.co.in:8080/api';
+const baseURL = 'https://fitclubstraterbackend-production.up.railway.app/api';
 
+// const baseURL = 'http://localhost:8080/api';
 const configURL = {
   // Auth URLs
   registerOwnerURL: `${baseURL}/auth/register`,

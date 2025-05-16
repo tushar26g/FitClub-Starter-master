@@ -248,7 +248,7 @@ const [errorDialog, setErrorDialog] = useState({
     Welcome!
   </DialogTitle>
   <DialogContent sx={{ textAlign: "center", fontSize: "1rem", paddingBottom: 3 }}>
-    🎉 Enjoy <strong>100 days</strong> of free trial!
+    🎉 Enjoy <strong>30 days</strong> of free trial!
     <Box mt={2} fontSize="0.9rem" color="gray">
       Redirecting to dashboard...
     </Box>

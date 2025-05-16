@@ -70,9 +70,7 @@ useEffect(() => {
         setMembers(response.data.data);
         setFilteredMembers(response.data.data);
       }
-      console.log("before checking token");
       await checkAndRefreshTokenIfOld();
-      console.log("after checking token");
     } catch (error) {
       if (error.response && error.response.status === 403) {
         setTimeout(() =>
