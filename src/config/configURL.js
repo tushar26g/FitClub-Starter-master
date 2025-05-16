@@ -1,5 +1,5 @@
 // All the Service URLs are to be included here...
-const baseURL = 'https://13.201.224.24:8080/api';
+const baseURL = 'http://13.201.224.24:8080/api';
 
 const configURL = {
   // Auth URLs
