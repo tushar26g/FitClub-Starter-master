@@ -32,6 +32,7 @@ const [errorDialog, setErrorDialog] = useState({
 
   const [errors, setErrors] = useState({});
   const [showTrialPopup, setShowTrialPopup] = useState(false);
+const [loading, setLoading] = useState(false);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -62,6 +63,7 @@ const [errorDialog, setErrorDialog] = useState({
       });
       return;
     }
+    setLoading(true); // ✅ Start loading
 
     try {
       const dto = {
@@ -116,7 +118,9 @@ const [errorDialog, setErrorDialog] = useState({
 });
 
       console.error(err);
-    }
+    } finally {
+    setLoading(false); // ✅ Stop loading
+  }
   };
 
   const compactInputStyle = {
@@ -222,6 +226,7 @@ const [errorDialog, setErrorDialog] = useState({
         <Button
           variant="contained"
           onClick={handleSubmit}
+          disabled={loading}
           sx={{
             backgroundColor: "var(--orange)",
             color: "white",
@@ -230,7 +235,7 @@ const [errorDialog, setErrorDialog] = useState({
             "&:hover": { backgroundColor: "#e07e0f" },
           }}
         >
-          Register
+          {loading ? "Registering..." : "Register"}
         </Button>
       </Box>
       <Dialog

@@ -25,7 +25,7 @@ const AddMember = ({ onMemberAdded }) => {
     height: "",
     dob: "",
   });
-
+const [loading, setLoading] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [bmi, setBmi] = useState(null);
   const [message, setMessage] = useState("");
@@ -143,7 +143,7 @@ const AddMember = ({ onMemberAdded }) => {
     const nextMonth = new Date();
     nextMonth.setMonth(nextMonth.getMonth() + 1);
     const oneMonthLater = nextMonth.toISOString().split("T")[0];
-
+setLoading(true); 
     try {
       // Prepare form data
       const submissionData = new FormData();
@@ -217,7 +217,9 @@ const AddMember = ({ onMemberAdded }) => {
         navigate("/");
         window.location.href = "/";
       }
-    }
+    } finally {
+    setLoading(false); // Stop loading after try/catch
+  }
   };
 
   const getBMIPosition = () => {
@@ -432,8 +434,8 @@ const AddMember = ({ onMemberAdded }) => {
             ref={fileInputRef} />
         </label>
 
-        <button type="submit" className="submit-button">
-          Add Member
+        <button type="submit" className="submit-button" disabled={loading}>
+          {loading ? "Adding..." : "Add Member"}
         </button>
       </form>
     </motion.div>
