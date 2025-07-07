@@ -14,7 +14,7 @@ export const programsData = [
         />
       </svg>
     ),
-    heading: "100 Days Free Trial",
+    heading: "30 Days Free Trial",
     details:
       "Get started with zero cost! Enjoy every feature of the platform completely free for 100 days — no payment, no limitations at all.",
   },

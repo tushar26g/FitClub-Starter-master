@@ -56,7 +56,7 @@ const getMembers = async () => {
       console.log("Unauthorized or expired token. Logging out.");
       localStorage.clear();
     } 
-throw error;
+  throw error;
 }
 };
 

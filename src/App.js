@@ -15,6 +15,7 @@ import { decodeToken, isTokenExpired, getUserRole } from './Utils/authHelper';
 import RenewOwnershipPage from './components/Auth/RenewOwnershipPage';
 import RenewMembershipPage from './components/Dashboard/Members/RenewMembershipPage';
 import ResetPasswordPage from './components/Auth/ResetPasswordPage';
+import OwnerUpdatePage from './components/Dashboard/Owner/OwnerUpdatePage';
 
 function App() {
   const isAuthenticated = () => {
@@ -71,6 +72,7 @@ function App() {
             <Route path="member-details" element={<MemberDetailsPage />} />
             <Route path="import-members" element={<ImportMembersPage />} />
             <Route path="renew" element={<RenewMembershipPage />} />
+            <Route path="profile" element={<OwnerUpdatePage />} />
           </Route>
         </Routes>
       </div>

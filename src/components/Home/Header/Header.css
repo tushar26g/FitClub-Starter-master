@@ -11,8 +11,8 @@
   }
   
   .logo {
-    width: 10rem;
-    height: auto;
+    width: 8rem;
+    height: 3rem;
   }
   
   /* ===================
@@ -195,6 +195,11 @@
       .login-close {
         top: 0.5rem;
         right: 0.5rem;
+      }
+
+      .logo{
+        width: 5rem;
+        height: auto;
       }
   }
   

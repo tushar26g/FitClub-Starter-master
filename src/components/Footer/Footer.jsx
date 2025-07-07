@@ -13,8 +13,8 @@ const Footer = () => {
         </div>
         <div className="footer-contact">
           <h3>Contact Us</h3>
-          <p>Email: krishnashinde33964@gmail.com</p>
-          <p>Phone: +91 9604016475</p>
+          <p>Email: tushar26g@gmail.com</p>
+          <p>Phone: +91 9370923154</p>
         </div>
         <div className="footer-social">
           <h3>Follow Us</h3>
@@ -61,7 +61,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} OurCompany. All Rights Reserved.</p>
+        <p>&copy; {new Date().getFullYear()} GymNotify. All Rights Reserved.</p>
         Made with love <span className="heart">❤️</span> by ambitious people
       </div>
     </footer>

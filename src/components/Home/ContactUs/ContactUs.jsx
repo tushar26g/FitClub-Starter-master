@@ -35,15 +35,15 @@ const ContactUs = () => {
         <div className="contact-info">
           <div className="info-item">
             <Mail size={20} />
-            <span>krishnashinde33964@gmail.com</span>
+            <span>tushar26g@gmail.com</span>
           </div>
           <div className="info-item">
             <Phone size={20} />
-            <span>+91 9604016475</span>
+            <span>+91 9370923154</span>
           </div>
           <div className="info-item">
             <MapPin size={20} />
-            <span>Plot No. 27/28, Cidco Waluj Mahanagar-1, Chhatrapati Sambhaji Nagar, Maharashtra 431136</span>
+            <span>Plot No. 30, Cidco Waluj Mahanagar-1, Chhatrapati Sambhaji Nagar, Maharashtra 431136</span>
           </div>
         </div>
       </div>

@@ -25,7 +25,7 @@ const ForgotPasswordForm = ({ onSwitch }) => {
       <h2>Forgot Password</h2>
       <input
         type="text"
-        placeholder="Registered Mobile Number"
+        placeholder="Registered Mobile Number or Email"
         value={mobileNumber}
         onChange={(e) => setMobileNumber(e.target.value)}
         required

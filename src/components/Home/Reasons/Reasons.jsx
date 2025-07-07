@@ -38,7 +38,7 @@ const Reasons = () => {
           </div>
           <div>
             <img src={tick} alt="" />
-            <span>100 Days Free Trial</span>
+            <span>30 Days Free Trial</span>
           </div>
         </div>
       </div>

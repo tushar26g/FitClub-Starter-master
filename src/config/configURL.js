@@ -40,6 +40,9 @@ const configURL = {
   deleteStaffURL: `${baseURL}/staff/delete`,
   updateStaffStatusURL: `${baseURL}/staff/update-status`,
   getStaffByOwnerURL: `${baseURL}/staff/by-owner`,
+
+  // Owner URLs
+  updateMemberURL: `${baseURL}/owner/update`,
 };
 
 export default configURL;

@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  padding-top: 4rem;
+  padding-top: 3rem;
   transition: all 300ms ease;
 }
 
@@ -31,10 +31,14 @@
 
 /* Menu */
 .menu2 {
-  margin-top: 2.7rem;
+  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.2rem;
+
+  overflow-y: auto;
+  max-height: calc(100vh - 8rem); /* adjust based on your layout */
+  padding-right: 0.5rem;
 }
 .menuItem2 {
   display: flex;
@@ -50,9 +54,8 @@
   cursor: pointer;
 }
 .menu2 .menuItem2:last-child {
-  position: absolute;
-  bottom: 2.3rem;
-  width: 100%;
+  position: static;
+  margin-top: auto;
 }
 
 .active {
@@ -80,8 +83,8 @@
 /* Mobile view */
 @media screen and (max-width: 768px) {
 .menu2 {
- margin-top: 2rem;
- gap: 1.2rem;
+ margin-top: 1.3rem;
+ gap: 1rem;
 }
 
   .sidebar {
@@ -92,6 +95,7 @@
     background: #ffe0e0;
     width: 72%;
     padding-right: 1rem;
+    padding-top: 4rem;
     height: 100vh;
     box-shadow: 2px 0px 8px rgba(0, 0, 0, 0.1);
     align-self: start;
@@ -108,8 +112,8 @@
   }
 
   .menu2 .menuItem2:last-child {
-    position: relative;
-    margin-top: 6rem;
+    position: static;
+    margin-top: auto;
   }
 
   .bars {
