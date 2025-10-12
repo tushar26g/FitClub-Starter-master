@@ -4,8 +4,45 @@ import "./AddMember.css";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
+async function convertToJpegFile(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const jpegFile = new File(
+              [blob],
+              file.name.replace(/\.[^/.]+$/, "") + ".jpg",
+              { type: "image/jpeg" }
+            );
+            resolve(jpegFile);
+          } else {
+            reject(new Error("Image conversion failed"));
+          }
+          URL.revokeObjectURL(url);
+        },
+        "image/jpeg",
+        0.85 // quality
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Image load error"));
+    };
+    img.src = url;
+  });
+}
+
+
 const AddMember = ({ onMemberAdded }) => {
-   const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null);
   const [packageError, setPackageError] = useState(""); // for error handling
   const [dob, setDob] = useState('');
   const today = new Date().toISOString().split("T")[0];
@@ -25,7 +62,7 @@ const AddMember = ({ onMemberAdded }) => {
     height: "",
     dob: "",
   });
-const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [bmi, setBmi] = useState(null);
   const [message, setMessage] = useState("");
@@ -52,7 +89,7 @@ const [loading, setLoading] = useState(false);
       }, 3000);
     }
   }, [message, error]);
-  
+
 
   useEffect(() => {
     if (formData.weight && formData.height) {
@@ -63,7 +100,7 @@ const [loading, setLoading] = useState(false);
       setBmi('');
     }
   }, [formData.weight, formData.height]);
-  
+
 
   useEffect(() => {
     if (height && weight) {
@@ -82,19 +119,19 @@ const [loading, setLoading] = useState(false);
     if (name === "mobileNumber" && (!/^\d{0,10}$/.test(value))) return;
 
     setFormData((prev) => ({ ...prev, [name]: value }));
-    
-      // Clear the packageError if the user selects a valid option
-      if (name === "packageName" && value !== "Select Package") {
-        setPackageError(""); // Clear error when a valid package is selected
-      }
-    
+
+    // Clear the packageError if the user selects a valid option
+    if (name === "packageName" && value !== "Select Package") {
+      setPackageError(""); // Clear error when a valid package is selected
+    }
+
   };
 
   const handlePackageChange = (e) => {
     const selectedPackage = e.target.value;
     const startDate = new Date(formData.joiningDate);
     let endDate = new Date(startDate);
-  
+
     if (selectedPackage === "1 Month") {
       endDate.setMonth(endDate.getMonth() + 1);
     } else if (selectedPackage === "3 Months") {
@@ -106,7 +143,7 @@ const [loading, setLoading] = useState(false);
     } else {
       endDate = ""; // fallback
     }
-  
+
     setFormData((prev) => ({
       ...prev,
       packageName: selectedPackage,
@@ -116,19 +153,35 @@ const [loading, setLoading] = useState(false);
     }));
   };
 
-  const handlePhotoChange = (e) => {
-    setProfilePhoto(e.target.files[0]);
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Convert file to JPEG if needed
+    let jpegFile = file;
+    if (file.type !== "image/jpeg") {
+      try {
+        jpegFile = await convertToJpegFile(file);
+      } catch (err) {
+        setError("Could not convert image. Please try another file.");
+        setProfilePhoto(null);
+        return;
+      }
+    }
+
+    setProfilePhoto(jpegFile);
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate required fields
     if (!formData.name || !formData.mobileNumber || !formData.paymentStatus || !formData.amountPaid) {
       setError("Please fill in all required fields.");
       return;
     }
-  
+
     // Validate mobile number
     if (!/^\d{10}$/.test(formData.mobileNumber)) {
       setError("Mobile number must be exactly 10 digits.");
@@ -139,33 +192,33 @@ const [loading, setLoading] = useState(false);
       setError("Please select a valid membership package");
       return;
     }
-    
+
     const nextMonth = new Date();
     nextMonth.setMonth(nextMonth.getMonth() + 1);
     const oneMonthLater = nextMonth.toISOString().split("T")[0];
-setLoading(true); 
+    setLoading(true);
     try {
       // Prepare form data
       const submissionData = new FormData();
       const dto = { ...formData };
       if (bmi) dto.bmi = bmi;
-  
+
       submissionData.append("dto", new Blob([JSON.stringify(dto)], { type: "application/json" }));
       if (profilePhoto) {
         submissionData.append("profilePhoto", profilePhoto);
       }
-  
+
       // API call
       const response = await memberService.addMember(submissionData);
-  
+
       // Handle success response from backend
       if (response?.data?.success) {
         setMessage(response.data.message || "Member added successfully!");
         setError("");
         setTimeout(() => setMessage(""), 3000);
-  
+
         fileInputRef.current.value = ""; // 👈 Clear file input
-        setProfilePhoto(null); 
+        setProfilePhoto(null);
 
         // Clear form
         setFormData({
@@ -185,7 +238,7 @@ setLoading(true);
         });
         setProfilePhoto(null);
         setBmi(null);
-  
+
         // Safely call parent callback
         if (typeof onMemberAdded === "function") {
           onMemberAdded();
@@ -196,30 +249,29 @@ setLoading(true);
         setMessage("");
         setTimeout(() => setError(""), 3000);
       }
-  
+
     } catch (err) {
       console.error("Add Member Error:", err);
-  
+
       // If backend sends error with response (like 409 Conflict)
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
       } else {
         setError("Failed to add member. Try again.");
       }
-  
+
       setMessage("");
       setTimeout(() => setError(""), 3000);
       if (err.response && err.response.status === 403) {
-        setTimeout(() =>
-        {
+        setTimeout(() => {
           localStorage.clear();
-        },5000)
+        }, 5000)
         navigate("/");
         window.location.href = "/";
       }
     } finally {
-    setLoading(false); // Stop loading after try/catch
-  }
+      setLoading(false); // Stop loading after try/catch
+    }
   };
 
   const getBMIPosition = () => {
@@ -242,7 +294,7 @@ setLoading(true);
     }
     return age;
   };
-  
+
 
   return (
     <motion.div
@@ -253,57 +305,56 @@ setLoading(true);
     >
       <h1 className="addMember-heading">Add New Member</h1>
       {message && (
-  <div className="toast toast-success">{message}</div>
-)}
-{error && (
-  <div className="toast toast-error">{error}</div>
-)}
+        <div className="toast toast-success">{message}</div>
+      )}
+      {error && (
+        <div className="toast toast-error">{error}</div>
+      )}
 
 
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-      <label>
-  <span>
-    Name<span className="required"> *</span>
-  </span>
-  <input
-    type="text"
-    name="name"
-    value={formData.name}
-    onChange={handleChange}
-  />
-</label>
+        <label>
+          <span>
+            Name<span className="required"> *</span>
+          </span>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+          />
+        </label>
 
 
         <label>
           <span>
-  Mobile Number<span className="required"> *</span>
-  </span>
-  <input
-    type="text"
-    name="mobileNumber"
-    value={formData.mobileNumber}
-    onChange={handleChange}
-    maxLength={10}
-    pattern="\d{10}"
-    title="Enter a valid 10-digit mobile number"
-  />
-</label>
+            Mobile Number<span className="required"> *</span>
+          </span>
+          <input
+            type="text"
+            name="mobileNumber"
+            value={formData.mobileNumber}
+            onChange={handleChange}
+            maxLength={10}
+            pattern="\d{10}"
+            title="Enter a valid 10-digit mobile number"
+          />
+        </label>
 
 
         <label>
           <span>
-  Email <span className="required">*</span></span>
-  <input
-    type="email"
-    name="email"
-    value={formData.email}
-    onChange={handleChange}
-    required // This makes the email field required
-    pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" // Email regex for validation
-    title="Please enter a valid email address" // Optional: Tooltip for invalid email
-  />
-</label>
-
+            Email <span className="required">*</span></span>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required // This makes the email field required
+            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" // Email regex for validation
+            title="Please enter a valid email address" // Optional: Tooltip for invalid email
+          />
+        </label>
 
         {/* Gender */}
         <label>
@@ -326,14 +377,14 @@ setLoading(true);
 
         <label>
           <span>
-          Amount Paid<span className="required"> *</span>
+            Amount Paid<span className="required"> *</span>
           </span>
           <input type="number" name="amountPaid" value={formData.amountPaid} onChange={handleChange} />
         </label>
 
         <label>
           Payment Method
-          <select name="paymentMethod" value={formData.paymentMethod} onChange={handleChange}>
+          <select name="interestLevel" value={formData.paymentMethod} onChange={handleChange}>
             <option value="CASH">Cash</option>
             <option value="UPI">UPI</option>
             <option value="CARD">Card</option>
@@ -342,14 +393,14 @@ setLoading(true);
 
         <label>
           <span>
-          Package<span className="required"> *</span>
+            Package<span className="required"> *</span>
           </span>
           <select
-    name="packageName"
-    value={formData.packageName}
-    onChange={handlePackageChange}
-    className={packageError ? "error" : ""}
-  >
+            name="interestLevel"
+            value={formData.packageName}
+            onChange={handlePackageChange}
+            className={packageError ? "error" : ""}
+          >
             {packages.map((p, i) => (
               <option key={i} value={p}>
                 {p}
@@ -371,61 +422,61 @@ setLoading(true);
 
         <label>
           <span>
-          Payment Status<span className="required"> *</span>
+            Payment Status<span className="required"> *</span>
           </span>
-          <select name="paymentStatus" value={formData.paymentStatus} onChange={handleChange}>
+          <select name="interestLevel" value={formData.paymentStatus} onChange={handleChange}>
             <option value="COMPLETED">Completed</option>
             <option value="PARTIAL">Partial</option>
           </select>
         </label>
 
-        <label>Date of Birth:</label>
+        <label className="label-no-gap">Date of Birth:</label>
         <input
-  type="date"
-  name="dob"
-  value={formData.dob}
-  onChange={handleChange}
-/>
-{dob && <p>Age: {getAge(dob)} years</p>}
+          type="date"
+          name="dob"
+          value={formData.dob}
+          onChange={handleChange}
+        />
+        {dob && <p>Age: {getAge(dob)} years</p>}
 
-<label>Height (cm):</label>
-<input
-  type="number"
-  name="height"
-  value={formData.height}
-  onChange={(e) => {
-    const value = e.target.value;
-    setFormData((prev) => ({
-      ...prev,
-      height: value === '' ? '' : parseFloat(value),
-    }));
-    setHeight(value); // Optional: only if you need this state separately
-  }}
-/>
+        <label className="label-no-gap">Height (cm):</label>
+        <input
+          type="number"
+          name="height"
+          value={formData.height}
+          onChange={(e) => {
+            const value = e.target.value;
+            setFormData((prev) => ({
+              ...prev,
+              height: value === '' ? '' : parseFloat(value),
+            }));
+            setHeight(value); // Optional: only if you need this state separately
+          }}
+        />
 
-<label>Weight (kg):</label>
-<input
-  type="number"
-  name="weight"
-  value={formData.weight}
-  onChange={(e) => {
-    const value = e.target.value;
-    setFormData((prev) => ({
-      ...prev,
-      weight: value === '' ? '' : parseFloat(value),
-    }));
-    setWeight(value); // Optional
-  }}
-/>
+        <label className="label-no-gap">Weight (kg):</label>
+        <input
+          type="number"
+          name="weight"
+          value={formData.weight}
+          onChange={(e) => {
+            const value = e.target.value;
+            setFormData((prev) => ({
+              ...prev,
+              weight: value === '' ? '' : parseFloat(value),
+            }));
+            setWeight(value); // Optional
+          }}
+        />
 
-{bmi && (
-  <div className="bmi-bar-container">
-    <div className="bmi-bar">
-      <div className="bmi-indicator" style={{ left: getBMIPosition() }}></div>
-    </div>
-    <p>Your BMI is: {bmi}</p>
-  </div>
-)}
+        {bmi && (
+          <div className="bmi-bar-container">
+            <div className="bmi-bar">
+              <div className="bmi-indicator" style={{ left: getBMIPosition() }}></div>
+            </div>
+            <p>Your BMI is: {bmi}</p>
+          </div>
+        )}
 
 
         <label>
