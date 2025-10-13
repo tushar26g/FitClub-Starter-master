@@ -20,37 +20,38 @@ const Cards = () => {
         const data = response.data.data;
 
         setCards([
-          {
-            title: "Total Members",
-            icon: groupIcon,
-            color: {
-              backGround: "linear-gradient(180deg, #bb67ff 0%, #c484f3 100%)",
-              boxShadow: "0px 10px 20px 0px #e0c6f5",
-            },
-            barValue: 100,
-            value: data.totalMembers,
-          },
-          {
-            title: "Active Members",
-            icon: activeIcon,
-            color: {
-              backGround: "linear-gradient(180deg, #4CAF50 0%, #81C784 100%)",
-              boxShadow: "0px 10px 20px 0px rgba(76, 175, 80, 0.3)",
-            },
-            barValue: Math.round((data.activeMembers / data.totalMembers) * 100),
-            value: data.activeMembers,
-          },
-          {
-            title: "Expired Members",
-            icon: expiredIcon,
-            color: {
-              backGround: "linear-gradient(180deg, #FF919D 0%, #FC929D 100%)",
-              boxShadow: "0px 10px 20px 0px #FDC0C7",
-            },
-            barValue: Math.round((data.suspendedMembers / data.totalMembers) * 100),
-            value: data.suspendedMembers,
-          },
-        ]);
+  {
+    title: "Total Members",
+    icon: groupIcon,
+    color: {
+      backGround: "linear-gradient(355deg, #0c72f7ff 0%, #ffb347 100%)", // Slightly richer blue
+      boxShadow: "0px 10px 30px 0px #ffe8b0",
+    },
+    barValue: 100,
+    value: data.totalMembers,
+  },
+  {
+    title: "Active Members",
+    icon: activeIcon,
+    color: {
+      backGround: "linear-gradient(135deg, #ffb347 0%, #0bd73bff 100%)", // Soft but richer green
+      boxShadow: "0px 10px 30px 0px #ffe8b0",
+    },
+    barValue: Math.round((data.activeMembers / data.totalMembers) * 100),
+    value: data.activeMembers,
+  },
+  {
+    title: "Expired Members",
+    icon: expiredIcon,
+    color: {
+      backGround: "linear-gradient(135deg, #ffcc33 0%, #ff1827ff 100%)", // Visible pastel red
+      boxShadow: "0px 10px 30px 0px #ffe8b0",
+    },
+    barValue: Math.round((data.suspendedMembers / data.totalMembers) * 100),
+    value: data.suspendedMembers,
+  },
+]);
+
       } catch (error) {
         console.error("Error fetching analysis data:", error);
       }
