@@ -3,7 +3,7 @@ import "./Card.css";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-const Card = ({ title, icon, color, barValue, value }) => {
+const Card = ({ title, icon, color, barValue, value, unit = "", disableExpand }) => {
   return (
     <div
       className="CompactCard"
@@ -16,18 +16,19 @@ const Card = ({ title, icon, color, barValue, value }) => {
         <CircularProgressbar value={barValue} text={`${barValue}%`} />
       </div>
       <div className="detail" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "15px" }}>
-        {/* Icon */}
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexShrink: 0 }}>
           {icon}
         </div>
-        {/* Value and Title */}
         <div style={{ textAlign: "center" }}>
-          <span style={{ fontSize: "24px", fontWeight: "600" }}>{value}</span>
+          <span style={{ fontSize: "24px", fontWeight: "600" }}>
+            {unit} {value}
+          </span>
           <div>{title}</div>
         </div>
       </div>
     </div>
   );
 };
+
 
 export default Card;
