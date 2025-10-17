@@ -1,0 +1,137 @@
+/* Base styles */
+.analytics-graph-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.analytics-chart-box {
+  flex: 1 1 100%;
+}
+
+@media (min-width: 768px) {
+  .analytics-chart-box {
+    flex: 1 1 48%;
+  }
+}
+
+/* Analytics Graph Grid - desktop 2 column */
+.analytics-graph-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Mobile specific styles */
+@media (max-width: 600px) {
+
+  .p-4,
+  .analytics-graph-grid {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+  }
+
+
+  .p-4 {
+    padding: 0.7rem 0.5rem !important;
+  }
+
+  .analytics-heading {
+    text-align: center !important;
+    font-size: 1.13rem !important;
+    margin-bottom: 0.85rem !important;
+    width: 100%;
+  }
+
+  /* Stack charts vertically in one column */
+  .analytics-graph-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.2rem !important;
+    /* margin-left: -28px !important; */
+  }
+
+  /* Make each card or box full width */
+  .analytics-graph-grid>.Card,
+  .analytics-graph-grid>.p-4,
+  .analytics-chart-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0.8rem 0.5rem !important;
+    border-radius: 10px !important;
+    box-sizing: border-box;
+    min-width: 0 !important;
+  }
+
+  /* Heading in cards */
+  .analytics-graph-grid h2 {
+    text-align: center !important;
+    font-size: 1rem !important;
+    margin-bottom: 0.65rem !important;
+    margin-top: 0.2rem !important;
+    width: 100%;
+  }
+
+  /* Chart container sizing */
+  /* .recharts-responsive-container {
+    width: 100% !important;
+    height: 170px !important;
+    min-height: 120px !important;
+    max-height: 230px !important;
+    margin: 0 !important;
+  } */
+  .recharts-responsive-container {
+    width: 100% !important;
+    height: 300px !important;
+    min-height: 150px;
+    /* Optional reasonable minimum */
+    overflow: visible !important;
+  }
+
+  /* No-data text */
+  .analytics-graph-grid .no-data {
+    padding: 1rem !important;
+    font-size: 0.93rem !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .recharts-responsive-container {
+    margin-left: -50px !important;
+    width: 300px !important;
+    display: block !important;
+  }
+
+  .text-lg {
+    margin-left: -0.8rem !important;
+    text-align: start !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .card-month-picker-box {
+    position: static !important;
+    width: 100% !important;
+    margin: 0 auto 0.4rem auto !important;
+    text-align: right !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+  }
+  /* Make the filter dropdown itself compact and responsive */
+  .card-month-picker-box .MuiTextField-root {
+    width: fit-content !important;
+    min-width: 90px !important;
+    max-width: 100vw !important;
+  }
+}
