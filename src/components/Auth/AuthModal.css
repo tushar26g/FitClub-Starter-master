@@ -12,7 +12,7 @@
 }
 
 .auth-popup {
-  background: white;
+  background: #f1f1f1;
   display: flex;
   width: 700px;
   max-width: 95%;
@@ -47,7 +47,7 @@
   width: 40%;
   padding: 2rem;
   background-color: var(--orange); /* Use your website’s theme color */
-  color: white;
+  color: #f1f1f1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -55,7 +55,7 @@
 }
 
 .auth-box {
-  background-color: white;
+  background-color: #f1f1f1;
   width: 90%;
   max-width: 800px;
   display: flex;
@@ -110,7 +110,7 @@ input {
 .btn-orange {
   background-color: var(--orange);
   border: none;
-  color: white;
+  color: #f1f1f1;
   padding: 10px;
   cursor: pointer;
   border-radius: 5px;
@@ -161,7 +161,7 @@ input {
 
   .auth-switch-container {
     background-color: var(--orange);
-    color: white;
+    color: #f1f1f1;
     padding: 1rem;
     flex-shrink: 0;
   }
@@ -205,7 +205,7 @@ input {
 
 /* Button styling */
 .switch-btn {
-  background-color: white;
+  background-color: #f1f1f1;
   color: var(--orange);
   border: none;
   padding: 10px 20px;
