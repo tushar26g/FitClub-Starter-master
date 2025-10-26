@@ -173,17 +173,17 @@ const Enquiry = ({ onMemberAdded }) => {
         </label>
 
         <label>
-  Interest Level
-  <select
-    name="interestLevel"
-    value={formData.interestLevel}
-    onChange={handleChange}
-  >
-    <option value="HIGH">HIGH</option>
-    <option value="MODERATE">MODERATE</option>
-    <option value="LOW">LOW</option>
-  </select>
-</label>
+          Interest Level
+          <select
+            name="interestLevel"
+            value={formData.interestLevel}
+            onChange={handleChange}
+          >
+            <option value="HIGH">HIGH</option>
+            <option value="MODERATE">MODERATE</option>
+            <option value="LOW">LOW</option>
+          </select>
+        </label>
 
         <button type="submit" className="submit-button">
           Add Enquiry
