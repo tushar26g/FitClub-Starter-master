@@ -1,0 +1,248 @@
+/* enquiry-table.css */
+
+/* Container */
+.enquiry-table {
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem;
+    padding-top: 2rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Table container */
+.enquiry-table-container {
+    box-shadow: 0px 13px 20px 0px #80808029;
+    border-radius: 0.7rem !important;
+    overflow-x: auto;
+}
+
+/* Table rows padding */
+.enquiry-table .MuiTableRow-root>* {
+    padding: 10px;
+}
+
+/* Table header */
+.enquiry-table .MuiTableRow-head>* {
+    font-weight: bold !important;
+    background-color: lightgray;
+}
+
+/* Table cell border */
+.enquiry-table td,
+.enquiry-table th {
+    border: none !important;
+}
+
+/* Status style */
+.enquiry-table .status {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+/* Details link */
+.enquiry-table .Details {
+    color: #00b5ff !important;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Table header layout */
+.enquiry-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Actions container */
+.enquiry-table-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Icon hover scale */
+.enquiry-table .MuiSvgIcon-root:hover {
+    transform: scale(1.1);
+    transition: 0.2s ease;
+}
+
+/* Responsive styles for mobile */
+@media screen and (max-width: 768px) {
+    .enquiry-table {
+        padding: 0.5rem;
+    }
+
+    .enquiry-table-container {
+        width: 100%;
+        overflow-x: auto;
+        box-shadow: none;
+        background: transparent;
+        padding: 0;
+    }
+
+    /* Adjust font size and padding on mobile */
+    .enquiry-table .MuiTableCell-root {
+        font-size: 0.75rem;
+        padding: 6px 8px;
+    }
+
+    .enquiry-table .status {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+
+    .enquiry-table .Details {
+        font-size: 0.75rem;
+    }
+
+    /* Table header adapts for mobile */
+    .enquiry-table-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.7rem;
+        padding: 10px 0;
+    }
+
+    .enquiry-table-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    /* Hide default MUI table on mobile */
+    .enquiry-table .MuiTable-root,
+    .enquiry-table .MuiTableHead-root,
+    .enquiry-table .MuiTableBody-root {
+        display: none !important;
+    }
+
+    /* Enquiry card style for mobile */
+    .enquiry-table .enquiry-block {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        background: var(--glass, #faf7f7);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        margin-bottom: 1rem;
+        padding: 0.8rem;
+        position: relative;
+    }
+
+    .enquiry-table .enquiry-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .enquiry-table .enquiry-label {
+        flex: 0 0 70px;
+        font-size: 0.85em;
+        color: var(--orange, #f97316);
+        font-weight: 500;
+        opacity: 0.7;
+    }
+
+    .enquiry-table .enquiry-value {
+        flex: 1;
+        word-break: break-word;
+        font-size: 0.9em;
+    }
+
+    .enquiry-table .enquiry-delete-btn {
+        background: none;
+        border: none;
+        color: var(--orange, #f97316);
+        font-size: 1.3em;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .enquiry-table .enquiry-avatar {
+        width: 36px !important;   /* smaller width */
+    height: 36px !important;  /* smaller height */
+    font-size: 1em !important; /* smaller font size for initials */
+    margin-bottom: 4px;
+    }
+}
+
+/* Dark mode styles */
+body.dark-mode .enquiry-table .MuiOutlinedInput-notchedOutline {
+    border-color: #f1f1f1;
+}
+
+body.dark-mode .enquiry-table input::placeholder {
+    color: #ccc !important;
+    opacity: 1 !important;
+}
+
+body.dark-mode .enquiry-table .search-icon {
+    color: #f1f1f1;
+}
+
+body.dark-mode .enquiry-table .MuiInputBase-input {
+    color: #f1f1f1;
+}
+
+body:not(.dark-mode) .enquiry-table .MuiOutlinedInput-notchedOutline {
+    border-color: #333;
+}
+
+body:not(.dark-mode) .enquiry-table input::placeholder {
+    color: #333;
+    opacity: 1;
+}
+
+body.dark-mode .enquiry-table .MuiTableRow-root:nth-of-type(even) {
+    background-color: #2c2c2c;
+}
+
+body.dark-mode .enquiry-table .MuiTableRow-root:nth-of-type(odd) {
+    background-color: #1e1e1e;
+}
+
+body.dark-mode .enquiry-table .MuiTableRow-root:hover {
+    background-color: #333333;
+}
+
+body.dark-mode .enquiry-table .MuiTableRow-head>* {
+    background-color: #444 !important;
+    color: #ffffff;
+}
+
+body.dark-mode .enquiry-table .MuiTableCell-root {
+    color: #f1f1f1;
+}
+
+body.dark-mode .enquiry-table .status {
+    color: #fff;
+    background-color: #666;
+}
+
+@media screen and (max-width: 768px) {
+    .enquiry-table .enquiry-block:nth-child(odd) {
+        background-color: var(--lightGray, #f0f4f8) !important;
+    }
+
+    .enquiry-table .enquiry-block:nth-child(even) {
+        background-color: var(--glass, #faf7f7) !important;
+    }
+
+    /* Dark mode adjustment */
+    body.dark-mode .enquiry-table .enquiry-block:nth-child(odd) {
+        background-color: #1e1e1e !important;
+    }
+
+    body.dark-mode .enquiry-table .enquiry-block:nth-child(even) {
+        background-color: #323030 !important;
+    }
+}
