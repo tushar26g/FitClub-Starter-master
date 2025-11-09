@@ -10,7 +10,7 @@
   }
   
   .modal-box {
-    background-color: white;
+    background-color: #f1f1f1;
     border-radius: 12px;
     padding: 30px 20px;
     width: 90%;
@@ -34,7 +34,7 @@
   
   .modal-box button {
     background-color: #f97316;
-    color: white;
+    color: #f1f1f1;
     border: none;
     padding: 10px 25px;
     border-radius: 6px;
